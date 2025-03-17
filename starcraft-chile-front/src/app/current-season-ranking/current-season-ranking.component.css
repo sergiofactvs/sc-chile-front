@@ -1,0 +1,128 @@
+:host {
+    --bg-dark: #0A0A14;
+    --accent-red: #D52B1E;
+    --accent-blue: #1E90FF;
+    --text-primary: #FFFFFF;
+    --text-secondary: #666666;
+    --border-color: #333333;
+  }
+  
+  .ranking-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+  }
+  
+  .ranking-header {
+    margin-bottom: 20px;
+  }
+  
+  .ranking-header h2 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+  
+  .tournament-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(10, 10, 20, 0.7);
+    border-left: 3px solid var(--accent-red);
+  }
+  
+  .prize-pool {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .prize-pool .label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+  }
+  
+  .prize-pool .amount {
+    font-size: 1.5em;
+    color: var(--text-primary);
+    font-weight: bold;
+  }
+  
+  .prize-pool .goal {
+    color: var(--text-secondary);
+    font-size: 0.8em;
+  }
+  
+  .inscribe-btn {
+    background-color: var(--accent-red);
+    color: var(--text-primary);
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .ranking-table thead {
+    background-color: rgba(30, 30, 50, 0.5);
+  }
+  
+  .ranking-table th, 
+  .ranking-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .ranking-table th {
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 0.8em;
+  }
+  
+  .ranking-table tbody tr {
+    transition: background-color 0.3s ease;
+  }
+  
+  .ranking-table tbody tr:hover {
+    background-color: rgba(30, 30, 50, 0.3);
+  }
+  
+  .status-csc {
+    background-color: var(--accent-blue);
+    color: var(--text-primary);
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+  }
+  
+  .ranking-footer {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+  }
+  /* Estilos anteriores mantenidos, añadir estos al final */
+.race-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .race-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }

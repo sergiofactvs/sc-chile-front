@@ -1,0 +1,43 @@
+<!-- src/app/app.component.html -->
+<div class="landing-container">
+  <div class="content-wrapper">
+    <!-- Logo y título centrado -->
+    <div class="logo-container">
+      <img src="logo.png" alt="Chilean StarCraft Championship Logo" class="logo">
+      <div class="title-container">
+        <h1 class="title">{{ title }}</h1>
+        <span class="subtitle">{{ subtitle }}</span>
+      </div>
+    </div>
+    
+    <!-- Mensaje de próximo torneo -->
+    <div class="tournament-announcement">
+      <div class="announcement-text">
+        <span class="coming-soon">PRÓXIMAMENTE</span>
+        <span class="tournament-date">{{ tournamentDate }}</span>
+      </div>
+      
+      <!-- Botón para entrar al sitio (puedes vincularlo a otra ruta en el futuro) -->
+      <button mat-raised-button color="accent" class="enter-button" (click)="onEnterSite()">
+        ENTRAR
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Footer con redes sociales usando mat-icon -->
+  <footer class="app-footer">
+    <p>Chilean StarCraft Championship © 2025</p>
+    <div class="social-links">
+      <a href="#" class="social-link">
+        <mat-icon fontSet="fab" fontIcon="fa-discord">discord</mat-icon>
+      </a>
+      <a href="#" class="social-link">
+        <mat-icon fontSet="fab" fontIcon="fa-facebook-f">facebook</mat-icon>
+      </a>
+      <a href="#" class="social-link">
+        <mat-icon fontSet="fab" fontIcon="fa-twitter">twitter</mat-icon>
+      </a>
+    </div>
+  </footer>
+</div>

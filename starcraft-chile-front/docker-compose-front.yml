@@ -1,0 +1,10 @@
+﻿version: "3.5"
+
+services:
+  starcraftchile-front:
+    build:      
+      dockerfile: Dockerfile     
+    container_name: starcraftchile-front
+    restart: always
+    ports:
+    - 4200:80  

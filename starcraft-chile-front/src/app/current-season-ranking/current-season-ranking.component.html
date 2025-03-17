@@ -1,0 +1,60 @@
+<div class="ranking-container">
+    <div class="ranking-header">
+      <h2>Ranking de Jugadores</h2>
+      <div class="tournament-info">
+        <div class="prize-pool">
+          <span class="label">Recaudación para torneo del 16 Marzo 2025</span>
+          <span class="amount">111.08 USD</span>
+          <span class="goal">Meta: 500 USD</span>
+        </div>
+        <button class="inscribe-btn">INSCRÍBETE AQUÍ</button>
+      </div>
+    </div>
+  
+    <ng-container *ngIf="!isLoading; else loadingTemplate">
+      <ng-container *ngIf="!error; else errorTemplate">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>POS</th>
+              <th>JUGADOR</th>
+              <th>GATEWAY</th>
+              <th>MMR</th>
+              <th>RAZA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let player of ranking; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ player.alias }}</td>
+              <td>{{ player.gateway_name }}</td>
+              <td>{{ player.rating }}</td>
+              <td>
+                <div class="race-cell">
+                  <img 
+                    [src]="getRaceIcon(player.race)" 
+                    [alt]="player.race" 
+                    class="race-icon"
+                  >
+                  
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </ng-container>
+  
+    <ng-template #loadingTemplate>
+      <div class="loading">Cargando ranking...</div>
+    </ng-template>
+  
+    <ng-template #errorTemplate>
+      <div class="error">{{ error }}</div>
+    </ng-template>
+  
+    <div class="ranking-footer">
+      <p>¿Quieres competir en el Campeonato Nacional?</p>
+      <p>Requisitos: Mínimo 20 partidas rankeadas y estar en el Top 8 del ranking MMR.</p>
+    </div>
+  </div>

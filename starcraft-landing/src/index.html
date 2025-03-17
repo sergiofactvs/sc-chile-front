@@ -1,0 +1,42 @@
+<!-- src/index.html -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Chilean StarCraft Championship</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos para forzar el tema oscuro -->
+  <style>
+    body, html {
+      background-color: #121212 !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Parche para asegurar que todo sea oscuro */
+    .mat-app-background,
+    .mat-mdc-card,
+    .mat-mdc-table,
+    .mat-toolbar.mat-primary,
+    .mat-mdc-row,
+    .mat-mdc-header-row {
+      background-color: #121212 !important;
+    }
+    
+    .mat-mdc-card {
+      background-color: #1a1a1a !important;
+    }
+    
+    .mat-toolbar.mat-primary {
+      background-color: #0a0a10 !important;
+    }
+  </style>
+</head>
+<body class="mat-app-background">
+  <app-root></app-root>
+</body>
+</html>
