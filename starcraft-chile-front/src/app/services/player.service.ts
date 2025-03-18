@@ -1,8 +1,10 @@
+// src/app/services/player.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import environment from '../../environments/environment';
 import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, ApiResponse } from '../models/player-profile.model';
+import { ActiveTournamentDto } from '../models/tournament.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,7 @@ export class PlayerService {
   }
 
   // Obtener torneos activos
-  getActiveTournaments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Player/active-tournaments`);
+  getActiveTournaments(): Observable<ActiveTournamentDto[]> {
+    return this.http.get<ActiveTournamentDto[]>(`${this.apiUrl}/Player/active-tournaments`);
   }
 }

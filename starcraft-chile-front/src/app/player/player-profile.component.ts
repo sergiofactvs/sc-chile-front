@@ -186,6 +186,7 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
             </div>
 
             <!-- Tab 2: Torneos y Perfiles -->
+            <!-- Tab 2: Torneos y Perfiles -->
             <div *ngIf="activeTabIndex === 1" class="tab-content">
               <div *ngIf="tournamentEnrollments && tournamentEnrollments.length > 0; else noTournaments">
                 <div class="tournaments-list">
@@ -246,9 +247,9 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
                             </div>
                             
                             <div class="profile-stats">
-                               <div class="stat-item">
+                                <div class="stat-item">
                           <div class="stat-label">MMR</div>
-                          <div class="stat-value">{{ gameProfile.standing || 'No rankeado' }}</div>
+                          <div class="stat-value">{{ gameProfile.rating || 'No rankeado' }}</div>
                         </div>
                         <div class="stat-item">
                           <div class="stat-label">Ranking</div>
@@ -307,7 +308,12 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
                 <div class="empty-state">
                   <mat-icon class="empty-icon">emoji_events</mat-icon>
                   <p>No estás inscrito en ningún torneo actualmente.</p>
-                  <a [routerLink]="['/']" class="action-link">Ver torneos disponibles</a>
+                  <a [routerLink]="['/enroll']" class="action-link">
+                    <button mat-raised-button color="primary" class="enroll-button">
+                      <mat-icon>add_circle</mat-icon>
+                      Inscribirme a un Torneo
+                    </button>
+                  </a>
                 </div>
               </ng-template>
             </div>
@@ -828,6 +834,24 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
       .info-label {
         margin-bottom: 5px;
       }
+    }
+       .action-link {
+      margin-top: 15px;
+      color: #D52B1E;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .enroll-button {
+      background-color: #D52B1E !important;
+      color: white !important;
+      margin-top: 15px;
+      padding: 8px 16px;
+      font-weight: bold;
+    }
+    
+    .enroll-button mat-icon {
+      margin-right: 8px;
     }
   `]
 })

@@ -1,3 +1,4 @@
+// src/app/landing/landing.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { PlayerService } from '../services/player.service';
+import { ActiveTournamentService } from '../services/active-tournament.service';
+import { TournamentEnrollmentService } from '../services/tournament-enrollment.service';
 
 @Component({
   selector: 'app-landing',
@@ -66,11 +69,83 @@ import { PlayerService } from '../services/player.service';
         <h1 class="title">Chilean StarCraft</h1>
         <p class="subtitle">CHAMPIONSHIP</p>
         
-        <!-- Anuncio del torneo -->
-        <div class="card">
+        <!-- Loading del torneo -->
+        <div *ngIf="isLoadingTournament" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Cargando torneo...</p>
+        </div>
+        
+        <!-- Anuncio del torneo activo -->
+        <div *ngIf="!isLoadingTournament && activeTournament" class="card">
+          <h2 class="tournament-name">{{ activeTournament.name }}</h2>
+          <div class="tournament-phase">{{ activeTournament.currentPhase || 'Clasificación' }}</div>
+          
+          <div class="tournament-info">
+            <div class="tournament-dates">
+              <p class="date-label">Clasificación:</p>
+              <p class="date-value">{{ activeTournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.qualificationEndDate | date:'dd-MM-yyyy' }}</p>
+            </div>
+            
+            <div class="tournament-dates">
+              <p class="date-label">Torneo Principal:</p>
+              <p class="date-value">{{ activeTournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.tournamentEndDate | date:'dd-MM-yyyy' }}</p>
+            </div>
+            
+            <div class="tournament-prize" *ngIf="activeTournament.prizePool">
+              <p class="prize-label">Premio:</p>
+              <p class="prize-value">{{ activeTournament.prizePool }} {{ activeTournament.currency || 'USD' }}</p>
+            </div>
+            
+            <div class="tournament-players">
+              <p class="players-label">Jugadores inscritos:</p>
+              <p class="players-value">{{ activeTournament.totalPlayers }}</p>
+            </div>
+          </div>
+          
+          <!-- Botones de acción -->
+          <div class="tournament-actions">
+            <button 
+              mat-raised-button 
+              class="view-button"
+              [routerLink]="['/active-tournament']"
+            >
+              <mat-icon>visibility</mat-icon>
+              VER TORNEO
+            </button>
+            
+            <ng-container *ngIf="isAuthenticated">
+              <button 
+                *ngIf="!isUserEnrolled"
+                mat-raised-button 
+                class="enter-button"
+                [routerLink]="['/enroll']"
+              >
+                <mat-icon>how_to_reg</mat-icon>
+                INSCRIBIRME
+              </button>
+              
+              <div *ngIf="isUserEnrolled" class="already-enrolled">
+                <mat-icon class="enrolled-icon">check_circle</mat-icon>
+                Ya estás inscrito
+              </div>
+            </ng-container>
+            
+            <button 
+              *ngIf="!isAuthenticated"
+              mat-raised-button 
+              class="enter-button"
+              [routerLink]="['/auth']"
+            >
+              REGÍSTRATE PARA PARTICIPAR
+            </button>
+          </div>
+        </div>
+        
+        <!-- Mensaje si no hay torneo activo -->
+        <div *ngIf="!isLoadingTournament && !activeTournament" class="card">
           <p class="coming-soon">PRÓXIMAMENTE</p>
-          <p class="tournament-date">Fase final</p>
-         
+          <p class="tournament-date">Nuevo Torneo</p>
+          <p class="no-tournament-message">No hay torneos activos en este momento. Vuelve pronto para más información.</p>
         </div>
         
         <!-- Footer -->
@@ -202,6 +277,35 @@ import { PlayerService } from '../services/player.service';
       margin: 10px 0 40px 0;
     }
 
+    /* Estado de carga */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #D52B1E;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* Card de torneo */
     .card {
       text-align: center;
       padding: 30px;
@@ -212,6 +316,104 @@ import { PlayerService } from '../services/player.service';
       width: 100%;
     }
 
+    .tournament-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: white;
+    }
+
+    .tournament-phase {
+      display: inline-block;
+      padding: 5px 15px;
+      background-color: rgba(213, 43, 30, 0.3);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .tournament-info {
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .tournament-dates, .tournament-prize, .tournament-players {
+      margin-bottom: 15px;
+    }
+
+    .date-label, .prize-label, .players-label {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .date-value, .prize-value, .players-value {
+      color: white;
+      font-weight: bold;
+      margin: 0;
+      padding-left: 10px;
+      border-left: 2px solid #D52B1E;
+    }
+
+    .players-value {
+      color: #D52B1E;
+      font-size: 1.2rem;
+    }
+
+    .tournament-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .view-button {
+      background-color: #1E90FF !important;
+      color: white !important;
+      font-weight: bold;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .view-button mat-icon {
+      margin-right: 8px;
+    }
+
+    .enter-button {
+      background-color: #d52b1e !important;
+      color: white !important;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 16px;
+    }
+
+    .enter-button mat-icon {
+      margin-right: 8px;
+    }
+
+    .already-enrolled {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-weight: bold;
+    }
+
+    .enrolled-icon {
+      margin-right: 8px;
+    }
+
+    /* Mensaje si no hay torneo */
     .coming-soon {
       font-size: 1.2rem;
       color: #aaa;
@@ -224,16 +426,12 @@ import { PlayerService } from '../services/player.service';
       font-size: 2.5rem;
       font-weight: 700;
       color: white;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
-    .enter-button {
-      background-color: #d52b1e;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .no-tournament-message {
+      color: #aaa;
+      margin-bottom: 20px;
     }
 
     .footer {
@@ -294,10 +492,15 @@ export class LandingComponent implements OnInit {
   isAuthenticated: boolean = false;
   userName: string = '';
   primaryAlias: string = '';
+  isLoadingTournament: boolean = true;
+  activeTournament: any = null;
+  isUserEnrolled: boolean = false;
   
   constructor(
     private authService: AuthService,
-    private playerService: PlayerService
+    private playerService: PlayerService,
+    private activeTournamentService: ActiveTournamentService,
+    private tournamentEnrollmentService: TournamentEnrollmentService
   ) {}
   
   ngOnInit() {
@@ -308,6 +511,7 @@ export class LandingComponent implements OnInit {
     if (this.isAuthenticated) {
       this.userName = this.authService.getUserName() || 'Usuario';
       this.loadPlayerAlias();
+      this.checkEnrollmentStatus();
     }
     
     // Suscribirse a cambios en el estado de autenticación
@@ -316,11 +520,16 @@ export class LandingComponent implements OnInit {
       if (isAuth) {
         this.userName = this.authService.getUserName() || 'Usuario';
         this.loadPlayerAlias();
+        this.checkEnrollmentStatus();
       } else {
         this.userName = '';
         this.primaryAlias = '';
+        this.isUserEnrolled = false;
       }
     });
+    
+    // Cargar torneo activo
+    this.loadActiveTournament();
   }
   
   loadPlayerAlias() {
@@ -333,6 +542,38 @@ export class LandingComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar perfiles de juego:', err);
+      }
+    });
+  }
+  
+  loadActiveTournament() {
+    this.isLoadingTournament = true;
+    this.activeTournamentService.getActiveTournamentWithPlayers().subscribe({
+      next: (tournament) => {
+        this.activeTournament = tournament;
+        this.isLoadingTournament = false;
+      },
+      error: (err) => {
+        // Si es 404, significa que no hay torneo activo (no es un error)
+        if (err.status === 404) {
+          this.activeTournament = null;
+        } else {
+          console.error('Error al cargar torneo activo:', err);
+        }
+        this.isLoadingTournament = false;
+      }
+    });
+  }
+  
+  checkEnrollmentStatus() {
+    if (!this.isAuthenticated) return;
+    
+    this.tournamentEnrollmentService.getEnrollmentStatus().subscribe({
+      next: (status) => {
+        this.isUserEnrolled = status.isEnrolled;
+      },
+      error: (err) => {
+        console.error('Error al verificar estado de inscripción:', err);
       }
     });
   }

@@ -1,3 +1,4 @@
+// Actualización del AuthService (src/app/services/auth.service.ts)
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
@@ -5,6 +6,27 @@ import { tap, catchError } from 'rxjs/operators';
 import environment from '../../environments/environment';
 import { LoginResponse } from '../models/auth.model';
 import { Router } from '@angular/router';
+
+// Definimos las interfaces necesarias basadas en el Swagger
+export interface UserRegistrationRequest {
+  firstName: string;
+  lastName: string;
+  birthDate: string; // Fecha en formato ISO string
+  country: string;
+  description?: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  alias: string;
+  gateway: number;
+  playerId?: number;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +89,15 @@ export class AuthService {
           );
         }
       }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Registrar un nuevo usuario
+   */
+  register(registrationData: UserRegistrationRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/register`, registrationData).pipe(
       catchError(this.handleError)
     );
   }
