@@ -47,6 +47,7 @@ export interface PlayerProfileDto {
     rank?: string;
     race?: string;
     rating?: number;
+    standing?: number;
     wins: number;
     losses: number;
     lastUpdated: string;
@@ -59,6 +60,7 @@ export interface PlayerProfileDto {
     birthDate: string;
     country: string;
     description?: string;
+    aliases: string;
   }
   
   export interface ApiResponse {

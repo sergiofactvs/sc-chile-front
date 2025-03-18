@@ -1,6 +1,6 @@
 export default  {
     production: false,
-    apiUrl: 'https://localhost:7274/api'
+    apiUrl: 'http://localhost:5203/api'
   };
   
    

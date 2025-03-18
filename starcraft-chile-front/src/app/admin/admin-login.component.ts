@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -58,9 +58,9 @@ import { AuthService } from '../services/auth.service';
           <button 
             type="submit" 
             class="enter-button"
-            [disabled]="loginForm.invalid"
+            [disabled]="loginForm.invalid || isLoading"
           >
-            ENTRAR
+            {{ isLoading ? 'CARGANDO...' : 'ENTRAR' }}
           </button>
           
           <p *ngIf="errorMessage" class="error-message">
@@ -188,11 +188,22 @@ import { AuthService } from '../services/auth.service';
       cursor: pointer;
     }
 
+    .enter-button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+
     .forgot-password {
       color: #aaa;
       text-decoration: none;
       margin-top: 10px;
       font-size: 0.9rem;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
     }
 
     .footer {
@@ -306,9 +317,10 @@ import { AuthService } from '../services/auth.service';
   }
   `]
 })
-export class AdminLoginComponent {
+export class AdminLoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -320,6 +332,7 @@ export class AdminLoginComponent {
       password: ['', Validators.required]
     });
   }
+  
   ngOnInit() {
     // Verificar si el usuario ya está logueado con rol de Admin
     const token = this.authService.getToken();
@@ -329,10 +342,15 @@ export class AdminLoginComponent {
       this.router.navigate(['/admin/dashboard']);
     }
   }
+  
   onLogin() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
+          this.isLoading = false;
           if (response.success) {
             const userRole = this.authService.getUserRole();
             if (userRole === 'Admin') {
@@ -344,8 +362,17 @@ export class AdminLoginComponent {
             this.errorMessage = 'Credenciales inválidas';
           }
         },
-        error: () => {
-          this.errorMessage = 'Error al iniciar sesión';
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error al iniciar sesión:', error);
+          
+          if (error.status === 401) {
+            this.errorMessage = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.';
+          } else if (error.status === 403) {
+            this.errorMessage = 'No tienes permisos de administrador para acceder.';
+          } else {
+            this.errorMessage = 'Error al iniciar sesión. Intenta de nuevo más tarde.';
+          }
         }
       });
     }

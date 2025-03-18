@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router'; 
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -75,10 +76,13 @@ import { MatButtonModule } from '@angular/material/button';
           <button 
             type="submit" 
             class="enter-button"
-            [disabled]="loginForm.invalid"
+            [disabled]="loginForm.invalid || isLoading"
           >
-            ENTRAR
+            {{ isLoading ? 'CARGANDO...' : 'ENTRAR' }}
           </button>
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
           <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
         </form>
 
@@ -130,10 +134,13 @@ import { MatButtonModule } from '@angular/material/button';
           <button 
             type="submit" 
             class="enter-button"
-            [disabled]="registrationForm.invalid"
+            [disabled]="registrationForm.invalid || isLoading"
           >
-            REGISTRARSE
+            {{ isLoading ? 'CARGANDO...' : 'REGISTRARSE' }}
           </button>
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
         </form>
       </div>
       
@@ -256,11 +263,22 @@ import { MatButtonModule } from '@angular/material/button';
       cursor: pointer;
     }
 
+    .enter-button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+
     .forgot-password {
       color: #aaa;
       text-decoration: none;
       margin-top: 10px;
       font-size: 0.9rem;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-top: 10px;
     }
 
     .footer {
@@ -322,20 +340,21 @@ import { MatButtonModule } from '@angular/material/button';
     }
 
     .container {
-      position: relative; // Añadir para posicionamiento absoluto del botón
+      position: relative; /* Añadir para posicionamiento absoluto del botón */
     }
-
-
   `]
 })
 export class AuthComponent {
   loginForm: FormGroup;
   registrationForm: FormGroup;
   currentTab: 'login' | 'register' = 'login';
+  errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -375,17 +394,55 @@ export class AuthComponent {
 
   onLogin() {
     if (this.loginForm.valid) {
-      console.log('Login:', this.loginForm.value);
-      // Implementar lógica de login
-      this.router.navigate(['/']);
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      // Obtener valores del formulario
+      const credentials = this.loginForm.value;
+      
+      // Llamar al servicio de autenticación
+      this.authService.login(credentials).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          // Redirigir según el rol del usuario
+          const userRole = this.authService.getUserRole();
+          
+          if (userRole === 'Admin') {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.router.navigate(['/profile']);
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Error de login:', err);
+          
+          // Manejar diferentes tipos de errores
+          if (err.status === 401) {
+            this.errorMessage = 'Credenciales incorrectas. Por favor, verifica tu correo y contraseña.';
+          } else if (err.status === 403) {
+            this.errorMessage = 'Cuenta desactivada o sin confirmar. Contacta al administrador.';
+          } else {
+            this.errorMessage = 'Error al iniciar sesión. Intenta de nuevo más tarde.';
+          }
+        }
+      });
     }
   }
 
   onRegister() {
     if (this.registrationForm.valid) {
-      console.log('Registro:', this.registrationForm.value);
-      // Implementar lógica de registro
-      this.router.navigate(['/']);
+      this.isLoading = true;
+      this.errorMessage = '';
+      
+      // Aquí implementaríamos la lógica de registro
+      // Como ejemplo, simulamos una redirección después de un registro exitoso
+      setTimeout(() => {
+        this.isLoading = false;
+        // En un caso real, aquí habría una llamada al API para registrar al usuario
+        alert('Registro exitoso! Te hemos enviado un correo para confirmar tu cuenta.');
+        this.currentTab = 'login'; // Cambiar a la pestaña de login después del registro
+      }, 1500);
     }
   }
 }

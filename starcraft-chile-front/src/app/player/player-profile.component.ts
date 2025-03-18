@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +14,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { PlayerService } from '../services/player.service';
 import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, TournamentEnrollmentDto } from '../models/player-profile.model';
 
-
 @Component({
   selector: 'app-player-profile',
   standalone: true,
@@ -24,7 +22,6 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
-    MatTabsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -72,10 +69,22 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
       </div>
 
       <div *ngIf="profile" class="profile-content">
-        <mat-tabs>
-          <!-- Información personal -->
-          <mat-tab label="Información Personal">
-            <div class="tab-content">
+        <!-- Custom tabs implementation -->
+        <div class="custom-tabs">
+          <div class="tab-buttons">
+            <button 
+              *ngFor="let tab of tabs; let i = index" 
+              [class.active]="activeTabIndex === i"
+              (click)="setActiveTab(i)"
+              class="tab-button"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+          
+          <div class="tab-content-container">
+            <!-- Tab 1: Información Personal -->
+            <div *ngIf="activeTabIndex === 0" class="tab-content">
               <mat-card class="profile-card">
                 <mat-card-header>
                   <mat-card-title>Datos Personales</mat-card-title>
@@ -123,6 +132,12 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
                       </mat-form-field>
                     </div>
 
+                    <!-- Campo de Alias/Nickname -->
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Alias / Nickname</mat-label>
+                      <input matInput formControlName="aliases">
+                    </mat-form-field>
+
                     <mat-form-field appearance="outline" class="full-width">
                       <mat-label>Descripción (opcional)</mat-label>
                       <textarea matInput formControlName="description" rows="4"></textarea>
@@ -169,127 +184,135 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
                 </mat-card-content>
               </mat-card>
             </div>
-          </mat-tab>
 
-          <!-- Perfiles de Juego -->
-          <mat-tab label="Perfiles de Juego">
-            <div class="tab-content" *ngIf="gameProfiles && gameProfiles.length > 0; else noGameProfiles">
-              <div class="game-profiles-grid">
-                <mat-card *ngFor="let gameProfile of gameProfiles" class="game-profile-card">
-                  <mat-card-header>
-                    <mat-card-title>{{ gameProfile.alias }}</mat-card-title>
-                    <mat-card-subtitle>{{ gameProfile.gatewayName }}</mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="profile-stats">
-                      <div class="stat-item">
-                        <div class="stat-label">Raza</div>
-                        <div class="stat-value race-value">
-                          <img *ngIf="gameProfile.race" 
-                            [src]="getRaceIcon(gameProfile.race)" 
-                            [alt]="gameProfile.race" 
-                            class="race-icon">
-                          {{ gameProfile.race || 'No especificada' }}
+            <!-- Tab 2: Torneos y Perfiles -->
+            <div *ngIf="activeTabIndex === 1" class="tab-content">
+              <div *ngIf="tournamentEnrollments && tournamentEnrollments.length > 0; else noTournaments">
+                <div class="tournaments-list">
+                  <mat-card *ngFor="let enrollment of tournamentEnrollments" class="tournament-card">
+                    <mat-card-header>
+                      <mat-card-title>{{ enrollment.tournamentName }}</mat-card-title>
+                      <mat-card-subtitle>
+                        <span class="enrollment-status" [ngClass]="getStatusClass(enrollment)">
+                          {{ enrollment.enrollmentStatus || (enrollment.isActive ? 'Activo' : 'Inactivo') }}
+                        </span>
+                      </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <!-- Información del torneo -->
+                      <div class="tournament-phases">
+                        <div class="phase">
+                          <div class="phase-title">Fase de Clasificación</div>
+                          <div class="phase-dates">
+                            {{ enrollment.qualificationStartDate | date:'dd-MM-yyyy' }} - 
+                            {{ enrollment.qualificationEndDate | date:'dd-MM-yyyy' }}
+                          </div>
+                        </div>
+                        <div class="phase">
+                          <div class="phase-title">Fase Principal</div>
+                          <div class="phase-dates">
+                            {{ enrollment.tournamentStartDate | date:'dd-MM-yyyy' }} - 
+                            {{ enrollment.tournamentEndDate | date:'dd-MM-yyyy' }}
+                          </div>
                         </div>
                       </div>
-                      <div class="stat-item">
-                        <div class="stat-label">Rango</div>
-                        <div class="stat-value">{{ gameProfile.rank || 'No rankeado' }}</div>
+                      
+                      <!-- Nueva sección: Información del perfil en este torneo -->
+                      <div class="profile-tournament-section">
+                        <h3 class="section-title">Perfil en este torneo</h3>
+                        
+                        <!-- Buscar el perfil asociado con este torneo -->
+                        <div *ngIf="getProfileForTournament(enrollment) as gameProfile; else noProfileForTournament">
+                          <div class="tournament-profile">
+                            <div class="profile-details">
+                              <div class="profile-item">
+                                <span class="profile-label">Alias:</span>
+                                <span class="profile-value">{{ gameProfile.alias }}</span>
+                              </div>
+                              <div class="profile-item">
+                                <span class="profile-label">Gateway:</span>
+                                <span class="profile-value">{{ gameProfile.gatewayName }}</span>
+                              </div>
+                              <div class="profile-item">
+                                <span class="profile-label">Raza:</span>
+                                <span class="profile-value race-value">
+                                  <img *ngIf="gameProfile.race" 
+                                    [src]="getRaceIcon(gameProfile.race)" 
+                                    [alt]="gameProfile.race" 
+                                    class="race-icon">
+                                  {{ gameProfile.race || 'No especificada' }}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            <div class="profile-stats">
+                               <div class="stat-item">
+                          <div class="stat-label">MMR</div>
+                          <div class="stat-value">{{ gameProfile.standing || 'No rankeado' }}</div>
+                        </div>
+                        <div class="stat-item">
+                          <div class="stat-label">Ranking</div>
+                          <div class="stat-value">{{ gameProfile.rank || 'N/A' }}</div>
+                        </div>
+                              <div class="stat-item">
+                                <div class="stat-label">Victorias</div>
+                                <div class="stat-value wins">{{ gameProfile.wins }}</div>
+                              </div>
+                              <div class="stat-item">
+                                <div class="stat-label">Derrotas</div>
+                                <div class="stat-value losses">{{ gameProfile.losses }}</div>
+                              </div>
+                              <div class="stat-item">
+                                <div class="stat-label">Ratio</div>
+                                <div class="stat-value">{{ calculateWinRatio(gameProfile.wins, gameProfile.losses) }}%</div>
+                              </div>
+                              <div class="stat-item">
+                                <div class="stat-label">Última actualización</div>
+                                <div class="stat-value">{{ gameProfile.lastUpdated | date:'dd-MM-yyyy HH:mm' }}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <ng-template #noProfileForTournament>
+                          <div class="empty-profile">
+                            <p>No tienes un perfil de juego asociado a este torneo.</p>
+                            <button mat-raised-button color="primary" class="add-profile-button">
+                              <mat-icon>add</mat-icon>
+                              Añadir Perfil de Juego
+                            </button>
+                          </div>
+                        </ng-template>
                       </div>
-                      <div class="stat-item">
-                        <div class="stat-label">Rating</div>
-                        <div class="stat-value">{{ gameProfile.rating || 'N/A' }}</div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-label">Victorias</div>
-                        <div class="stat-value wins">{{ gameProfile.wins }}</div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-label">Derrotas</div>
-                        <div class="stat-value losses">{{ gameProfile.losses }}</div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-label">Ratio</div>
-                        <div class="stat-value">{{ calculateWinRatio(gameProfile.wins, gameProfile.losses) }}%</div>
-                      </div>
-                      <div class="stat-item full-width">
-                        <div class="stat-label">Última actualización</div>
-                        <div class="stat-value">{{ gameProfile.lastUpdated | date:'dd-MM-yyyy HH:mm' }}</div>
-                      </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-            </div>
-            <ng-template #noGameProfiles>
-              <div class="empty-state">
-                <mat-icon class="empty-icon">videogame_asset</mat-icon>
-                <p>No tienes perfiles de juego registrados.</p>
-              </div>
-            </ng-template>
-          </mat-tab>
 
-          <!-- Torneos -->
-          <mat-tab label="Torneos">
-            <div class="tab-content" *ngIf="tournamentEnrollments && tournamentEnrollments.length > 0; else noTournaments">
-              <div class="tournaments-list">
-                <mat-card *ngFor="let enrollment of tournamentEnrollments" class="tournament-card">
-                  <mat-card-header>
-                    <mat-card-title>{{ enrollment.tournamentName }}</mat-card-title>
-                    <mat-card-subtitle>
-                      <span class="enrollment-status" [ngClass]="getStatusClass(enrollment)">
-                        {{ enrollment.enrollmentStatus || (enrollment.isActive ? 'Activo' : 'Inactivo') }}
-                      </span>
-                    </mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="tournament-phases">
-                      <div class="phase">
-                        <div class="phase-title">Fase de Clasificación</div>
-                        <div class="phase-dates">
-                          {{ enrollment.qualificationStartDate | date:'dd-MM-yyyy' }} - 
-                          {{ enrollment.qualificationEndDate | date:'dd-MM-yyyy' }}
+                      <!-- Información de la inscripción -->
+                      <div class="enrollment-info">
+                        <h3 class="section-title">Información de inscripción</h3>
+                        <div class="info-grid">
+                          <div class="info-item">
+                            <span class="info-label">Fecha de registro:</span>
+                            <span class="info-value">{{ enrollment.registeredDate | date:'dd-MM-yyyy' }}</span>
+                          </div>
+                          <div class="info-item">
+                            <span class="info-label">Fase actual:</span>
+                            <span class="info-value">{{ enrollment.currentPhase || 'Sin iniciar' }}</span>
+                          </div>
                         </div>
                       </div>
-                      <div class="phase">
-                        <div class="phase-title">Fase Principal</div>
-                        <div class="phase-dates">
-                          {{ enrollment.tournamentStartDate | date:'dd-MM-yyyy' }} - 
-                          {{ enrollment.tournamentEndDate | date:'dd-MM-yyyy' }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="tournament-info">
-                      <div class="info-item">
-                        <span class="info-label">Alias:</span>
-                        <span class="info-value">{{ enrollment.alias }}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Gateway:</span>
-                        <span class="info-value">{{ enrollment.gatewayName }}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Inscrito el:</span>
-                        <span class="info-value">{{ enrollment.registeredDate | date:'dd-MM-yyyy' }}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="info-label">Fase actual:</span>
-                        <span class="info-value">{{ enrollment.currentPhase || 'Sin iniciar' }}</span>
-                      </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
               </div>
+              <ng-template #noTournaments>
+                <div class="empty-state">
+                  <mat-icon class="empty-icon">emoji_events</mat-icon>
+                  <p>No estás inscrito en ningún torneo actualmente.</p>
+                  <a [routerLink]="['/']" class="action-link">Ver torneos disponibles</a>
+                </div>
+              </ng-template>
             </div>
-            <ng-template #noTournaments>
-              <div class="empty-state">
-                <mat-icon class="empty-icon">emoji_events</mat-icon>
-                <p>No estás inscrito en ningún torneo actualmente.</p>
-                <a [routerLink]="['/']" class="action-link">Ver torneos disponibles</a>
-              </div>
-            </ng-template>
-          </mat-tab>
-        </mat-tabs>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="!profile && !error" class="loading-container">
@@ -356,22 +379,38 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
       margin-top: 20px;
     }
 
-    /* Estilos de las pestañas */
-    ::ng-deep .mat-mdc-tab-header {
+    /* Custom tabs styles */
+    .custom-tabs {
+      margin-bottom: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
       background-color: rgba(10, 10, 20, 0.7);
       border-radius: 8px 8px 0 0;
       border-left: 3px solid #D52B1E;
+      overflow: hidden;
     }
 
-    ::ng-deep .mat-mdc-tab-label-content {
-      color: white !important;
+    .tab-button {
+      background: none;
+      border: none;
+      color: white;
+      padding: 15px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+      flex: 1;
     }
 
-    ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-      color: #D52B1E !important;
+    .tab-button.active {
+      color: #D52B1E;
+      border-bottom-color: #D52B1E;
+      background-color: rgba(213, 43, 30, 0.1);
     }
 
-    ::ng-deep .mat-mdc-tab-body-content {
+    .tab-content-container {
       background-color: rgba(10, 10, 20, 0.7);
       border-radius: 0 0 8px 8px;
       border-left: 3px solid #D52B1E;
@@ -383,7 +422,7 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
     }
 
     /* Estilos de las tarjetas */
-    .profile-card {
+    .profile-card, .tournament-card {
       background-color: rgba(30, 30, 50, 0.5) !important;
       color: white;
       margin-bottom: 20px;
@@ -539,18 +578,6 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
     }
 
     /* Estilos para los perfiles de juego */
-    .game-profiles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .game-profile-card {
-      background-color: rgba(30, 30, 50, 0.5) !important;
-      color: white;
-      height: 100%;
-    }
-
     .profile-stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -652,16 +679,73 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
       border-left: 2px solid #D52B1E;
     }
 
-    .tournament-info {
-      margin-top: 15px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    /* Nuevos estilos para la sección de perfil en torneo */
+    .profile-tournament-section {
+      margin-top: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 15px;
     }
 
-    .info-item {
+    .section-title {
+      font-size: 1.2rem;
+      color: #D52B1E;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    .tournament-profile {
+      background-color: rgba(20, 20, 40, 0.5);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .profile-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-item {
       display: flex;
       flex-direction: column;
+    }
+
+    .profile-label {
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+
+    .profile-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .empty-profile {
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(20, 20, 40, 0.5);
+      border-radius: 6px;
+    }
+
+    .add-profile-button {
+      margin-top: 15px;
+    }
+
+    .enrollment-info {
+      margin-top: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
 
     /* Estados vacíos */
@@ -728,7 +812,7 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
         flex-direction: column;
       }
 
-      .profile-stats, .tournament-info {
+      .profile-stats, .tournament-info, .profile-details, .info-grid {
         grid-template-columns: 1fr;
       }
 
@@ -748,6 +832,14 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
   `]
 })
 export class PlayerProfileComponent implements OnInit {
+  // Definición de pestañas para nuestro componente personalizado
+  tabs = [
+    { label: 'Información Personal' },
+    { label: 'Torneos' }
+  ];
+  
+  activeTabIndex: number = 0;
+  
   profile: PlayerProfileDto | null = null;
   gameProfiles: GameProfileDto[] = [];
   tournamentEnrollments: TournamentEnrollmentDto[] = [];
@@ -767,6 +859,7 @@ export class PlayerProfileComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       birthDate: ['', Validators.required],
       country: ['', [Validators.required, Validators.minLength(2)]],
+      aliases: [''], // Campo para Aliases/Nickname
       description: ['']
     });
   }
@@ -774,6 +867,11 @@ export class PlayerProfileComponent implements OnInit {
   ngOnInit() {
     this.loadProfile();
     this.loadGameProfiles();
+  }
+
+  // Método para cambiar entre pestañas
+  setActiveTab(index: number) {
+    this.activeTabIndex = index;
   }
 
   loadProfile() {
@@ -790,6 +888,7 @@ export class PlayerProfileComponent implements OnInit {
           lastName: profile.lastName,
           birthDate: new Date(profile.birthDate),
           country: profile.country,
+          aliases: profile.aliases,
           description: profile.description
         });
       },
@@ -811,6 +910,20 @@ export class PlayerProfileComponent implements OnInit {
     });
   }
 
+  // Nuevo método para obtener el perfil asociado a un torneo específico
+  getProfileForTournament(enrollment: TournamentEnrollmentDto): GameProfileDto | null {
+    if (!this.gameProfiles || this.gameProfiles.length === 0) {
+      return null;
+    }
+    
+    // Buscar un perfil que coincida con el alias del torneo
+    // También podemos buscar por gateway si está disponible
+    return this.gameProfiles.find(profile => 
+      profile.alias === enrollment.alias && 
+      profile.gateway === enrollment.gateway
+    ) || null;
+  }
+
   onSubmit() {
     if (this.profileForm.valid) {
       const formValue = this.profileForm.value;
@@ -828,13 +941,14 @@ export class PlayerProfileComponent implements OnInit {
               this.profile.lastName = updateRequest.lastName;
               this.profile.birthDate = updateRequest.birthDate;
               this.profile.country = updateRequest.country;
+              this.profile.aliases = updateRequest.aliases;
               this.profile.description = updateRequest.description;
             }
             
             // Resetear estado del formulario
             this.profileForm.markAsPristine();
             
-            // Mostrar mensaje de éxito (aquí podrías agregar un mensaje toast)
+            // Mostrar mensaje de éxito
             alert('Perfil actualizado correctamente');
           } else {
             alert(`Error: ${response.message}`);

@@ -137,9 +137,10 @@ import { PlayerService } from '../services/player.service';
       white-space: nowrap;
     }
     
-    ::ng-deep .user-menu {
-      background-color: #1A1A2E;
-      border-left: 3px solid #D52B1E;
+    /* Estilos para el menú desplegable */
+    ::ng-deep .mat-mdc-menu-panel.user-menu {
+      background-color: #1A1A2E !important;
+      border-left: 3px solid #D52B1E !important;
     }
     
     ::ng-deep .mat-mdc-menu-item {
@@ -152,6 +153,16 @@ import { PlayerService } from '../services/player.service';
     
     ::ng-deep .mat-mdc-menu-item .mat-icon {
       color: #D52B1E !important;
+    }
+
+    /* Asegurarse de que el texto dentro del menú sea visible */
+    ::ng-deep .mat-mdc-menu-item span {
+      color: white !important;
+    }
+
+    /* Asegurarse de que el color de fondo del panel sea visible */
+    ::ng-deep .mat-mdc-menu-content {
+      background-color: #1A1A2E !important;
     }
 
     .container {
