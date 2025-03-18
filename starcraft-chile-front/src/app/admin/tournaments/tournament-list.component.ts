@@ -30,6 +30,13 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
         <h1>Administración de Torneos</h1>
       </div>
 
+      <div class="back-link">
+        <a [routerLink]="['/admin/dashboard']" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+          Volver al Dashboard
+        </a>
+      </div>
+
       <div class="actions">
         <button 
           mat-raised-button 
@@ -52,7 +59,16 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
         <ng-container matColumnDef="dates">
           <th mat-header-cell *matHeaderCellDef>Fechas</th>
           <td mat-cell *matCellDef="let tournament">
-            {{ tournament.startDate | date }} - {{ tournament.endDate | date }}
+            <div class="dates-container">
+              <div class="date-phase">
+                <span class="phase-label">Clasificación:</span>
+                {{ tournament.startDate | date:'dd-MM-yyyy' }} - {{ tournament.endDate | date:'dd-MM-yyyy' }}
+              </div>
+              <div class="date-phase">
+                <span class="phase-label">Torneo:</span>
+                {{ tournament.tournamentStartDate | date:'dd-MM-yyyy' }} - {{ tournament.tournamentEndDate | date:'dd-MM-yyyy' }}
+              </div>
+            </div>
           </td>
         </ng-container>
 
@@ -78,15 +94,17 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
           <td mat-cell *matCellDef="let tournament">
             <button 
               mat-icon-button 
-              color="primary"
+              class="edit-button"
               (click)="editTournament(tournament.id)"
+              aria-label="Editar torneo"
             >
               <mat-icon>edit</mat-icon>
             </button>
             <button 
               mat-icon-button 
-              color="warn"
+              class="delete-button"
               (click)="deleteTournament(tournament.id)"
+              aria-label="Eliminar torneo"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -124,6 +142,27 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
       margin: 0;
     }
 
+    .back-link {
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .back-button:hover {
+      color: #D52B1E;
+    }
+
+    .back-button mat-icon {
+      margin-right: 8px;
+    }
+
     .actions {
       margin-bottom: 20px;
     }
@@ -144,65 +183,71 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
       width: 100%;
       background-color: rgba(10, 10, 20, 0.7);
       border-left: 3px solid #d52b1e;
+      box-shadow: none;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     /* Estilos de tabla */
-    ::ng-deep .mat-header-cell {
-      color: white !important;
+    ::ng-deep .mat-mdc-table {
+      background-color: transparent !important;
+    }
+
+    ::ng-deep .mat-mdc-header-row {
       background-color: rgba(30, 30, 50, 0.5) !important;
-      font-weight: bold !important;
     }
 
-    ::ng-deep .mat-cell {
+    ::ng-deep .mat-mdc-header-cell {
       color: white !important;
       background-color: transparent !important;
+      font-weight: bold !important;
+      border-bottom: none !important;
     }
 
-    ::ng-deep .mat-row {
+    ::ng-deep .mat-mdc-row {
       background-color: transparent !important;
     }
 
-    ::ng-deep .mat-row:hover {
+    ::ng-deep .mat-mdc-cell {
+      color: white !important;
+      background-color: transparent !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    ::ng-deep .mat-mdc-row:hover {
       background-color: rgba(255,255,255,0.1) !important;
     }
 
     /* Botones de acción */
-    ::ng-deep .mat-icon-button {
+    .edit-button, .delete-button {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 5px;
+    }
+
+    .edit-button {
+      background-color: #1E90FF !important;
       color: white !important;
     }
 
-    ::ng-deep .mat-icon-button.mat-primary {
-      color: #1E90FF !important; /* Azul para editar */
+    .delete-button {
+      background-color: #D52B1E !important;
+      color: white !important;
     }
 
-    ::ng-deep .mat-icon-button.mat-warn {
-      color: #D52B1E !important; /* Rojo para eliminar */
+    .mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-      ::ng-deep .mat-mdc-table {
-    background-color: transparent !important;
-  }
-
-  ::ng-deep .mat-mdc-header-row {
-    background-color: rgba(30, 30, 50, 0.5) !important;
-  }
-
-  ::ng-deep .mat-mdc-header-cell {
-    color: white !important;
-    background-color: transparent !important;
-  }
-
-  ::ng-deep .mat-mdc-row {
-    background-color: transparent !important;
-  }
-
-  ::ng-deep .mat-mdc-cell {
-    color: white !important;
-    background-color: transparent !important;
-  }
-
-  ::ng-deep .mat-mdc-row:hover {
-    background-color: rgba(255,255,255,0.1) !important;
-  }
   `]
 })
 export class TournamentListComponent implements OnInit {

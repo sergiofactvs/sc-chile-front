@@ -11,10 +11,15 @@ import { LoginResponse } from '../models/auth.model';
 export class AuthService {
   private apiUrl = environment.apiUrl;
   private tokenSubject = new BehaviorSubject<string | null>(null);
+  public isAuthenticated = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
     // Recuperar token almacenado al inicializar
-    this.tokenSubject.next(localStorage.getItem('jwt_token'));
+    const storedToken = localStorage.getItem('jwt_token');
+    this.tokenSubject.next(storedToken);
+    
+    // Actualizar estado de autenticación
+    this.isAuthenticated.next(!!storedToken);
   }
 
   login(credentials: { email: string, password: string }): Observable<LoginResponse> {
@@ -24,7 +29,12 @@ export class AuthService {
           // Guardar token en localStorage
           localStorage.setItem('jwt_token', response.token);
           localStorage.setItem('user_role', this.extractUserRole(response.token));
+          localStorage.setItem('user_email', response.user.email);
+          localStorage.setItem('user_name', `${response.user.firstName} ${response.user.lastName}`);
+          
+          // Actualizar behaviorSubjects
           this.tokenSubject.next(response.token);
+          this.isAuthenticated.next(true);
         }
       })
     );
@@ -38,10 +48,28 @@ export class AuthService {
     return localStorage.getItem('user_role');
   }
 
+  getUserEmail(): string | null {
+    return localStorage.getItem('user_email');
+  }
+
+  getUserName(): string | null {
+    return localStorage.getItem('user_name');
+  }
+
   logout() {
+    // Limpiar información de usuario del localStorage
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('user_role');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_name');
+    
+    // Actualizar behaviorSubjects
     this.tokenSubject.next(null);
+    this.isAuthenticated.next(false);
+    
+    // También podríamos realizar una llamada al backend para invalidar el token
+    // (depende de cómo está implementado el backend)
+    // this.http.post(`${this.apiUrl}/Auth/logout`, {}).subscribe();
   }
 
   private extractUserRole(token: string): string {

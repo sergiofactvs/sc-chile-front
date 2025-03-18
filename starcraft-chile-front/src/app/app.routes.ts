@@ -2,7 +2,10 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './landing/landing.component';
 import { CurrentSeasonRankingComponent } from './current-season-ranking/current-season-ranking.component';
 import { AuthComponent } from './auth/auth.component';
+import { PlayerProfileComponent } from './player/player-profile.component';
 import { adminRoutes } from './admin/admin.routes';
+import { AuthGuard } from './guards/auth.guard';
+
 export const routes: Routes = [
   ...adminRoutes,
   { 
@@ -16,6 +19,11 @@ export const routes: Routes = [
   {
     path: 'auth', 
     component: AuthComponent
+  },
+  {
+    path: 'profile',
+    component: PlayerProfileComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: '**', 
