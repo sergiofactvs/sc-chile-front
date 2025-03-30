@@ -16,7 +16,13 @@ export class ActiveTournamentService {
   /**
    * Obtener el torneo de clasificación activo con sus jugadores inscritos
    */
-  getActiveTournamentWithPlayers(): Observable<ActiveTournamentWithPlayersDto> {
-    return this.http.get<ActiveTournamentWithPlayersDto>(`${this.apiUrl}/TournamentEnrollment/active-qualification-tournament`);
+  getActiveTournamentWithPlayers(minGames: number = 20): Observable<ActiveTournamentWithPlayersDto> {
+    return this.http.get<ActiveTournamentWithPlayersDto>(
+      `${this.apiUrl}/TournamentEnrollment/active-qualification-tournament`, {
+        params: {
+          minGames: minGames.toString()
+        }
+      }
+    );
   }
 }

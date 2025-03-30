@@ -1,128 +1,241 @@
+/* src/app/current-season-ranking/current-season-ranking.component.css */
 :host {
-    --bg-dark: #0A0A14;
-    --accent-red: #D52B1E;
-    --accent-blue: #1E90FF;
-    --text-primary: #FFFFFF;
-    --text-secondary: #666666;
-    --border-color: #333333;
-  }
-  
-  .ranking-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--bg-dark);
-    color: var(--text-primary);
-  }
-  
-  .ranking-header {
-    margin-bottom: 20px;
-  }
-  
-  .ranking-header h2 {
-    text-align: center;
-    color: var(--text-primary);
-    margin-bottom: 20px;
-  }
-  
+  --bg-dark: #0A0A14;
+  --accent-red: #D52B1E;
+  --accent-blue: #1E90FF;
+  --text-primary: #FFFFFF;
+  --text-secondary: #666666;
+  --border-color: #333333;
+  --qualified-bg: rgba(30, 144, 255, 0.1);
+  --top-qualified-bg: rgba(30, 144, 255, 0.2);
+}
+
+.ranking-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+}
+
+.ranking-header {
+  margin-bottom: 20px;
+}
+
+.ranking-header h2 {
+  text-align: center;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.tournament-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: rgba(10, 10, 20, 0.7);
+  border-left: 3px solid var(--accent-red);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tournament-details {
+  flex: 2;
+  min-width: 250px;
+}
+
+.tournament-details h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: var(--accent-red);
+}
+
+.tournament-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.date-label {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.date-value {
+  color: var(--text-primary);
+  padding-left: 10px;
+  border-left: 2px solid var(--accent-red);
+}
+
+.prize-pool {
+  display: flex;
+  flex-direction: column;
+  flex: 2;
+  min-width: 250px;
+}
+
+.prize-pool .label {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.prize-pool .amount {
+  font-size: 1.5em;
+  color: var(--text-primary);
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.qualification-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+
+.inscribe-btn {
+  background-color: var(--accent-red);
+  color: var(--text-primary);
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  flex: 1;
+  min-width: 180px;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ranking-table thead {
+  background-color: rgba(30, 30, 50, 0.5);
+}
+
+.ranking-table th, 
+.ranking-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ranking-table th {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.ranking-table tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+.ranking-table tbody tr:hover {
+  background-color: rgba(30, 30, 50, 0.3);
+}
+
+/* Estilos para jugadores clasificados */
+.qualified-player {
+  background-color: var(--qualified-bg);
+}
+
+.top-player {
+  background-color: var(--top-qualified-bg);
+}
+
+/* Estilos para la columna de posición */
+.pos-column {
+  width: 60px;
+  text-align: center;
+  position: relative;
+}
+
+.position-top {
+  color: gold;
+  font-weight: bold;
+}
+
+.position-qualified {
+  color: var(--accent-blue);
+  font-weight: bold;
+}
+
+.qualification-badge {
+  font-size: 0.75em;
+  color: var(--accent-blue);
+  background-color: rgba(30, 144, 255, 0.1);
+  padding: 2px 5px;
+  border-radius: 10px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+/* Estilos para la celda de raza */
+.race-cell {
+  display: flex;
+  align-items: center;
+}
+
+.race-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Estilos para el estado de clasificación */
+.qualification-status {
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  display: inline-block;
+}
+
+.qualified {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+}
+
+.top-qualified {
+  background-color: rgba(76, 175, 80, 0.3);
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.status-text {
+  white-space: nowrap;
+}
+
+.ranking-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--accent-red);
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
   .tournament-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: rgba(10, 10, 20, 0.7);
-    border-left: 3px solid var(--accent-red);
-  }
-  
-  .prize-pool {
-    display: flex;
     flex-direction: column;
-  }
-  
-  .prize-pool .label {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-  }
-  
-  .prize-pool .amount {
-    font-size: 1.5em;
-    color: var(--text-primary);
-    font-weight: bold;
-  }
-  
-  .prize-pool .goal {
-    color: var(--text-secondary);
-    font-size: 0.8em;
-  }
-  
-  .inscribe-btn {
-    background-color: var(--accent-red);
-    color: var(--text-primary);
-    border: none;
-    padding: 10px 20px;
-    font-weight: bold;
-    cursor: pointer;
+    align-items: flex-start;
   }
   
   .ranking-table {
-    width: 100%;
-    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
   }
-  
-  .ranking-table thead {
-    background-color: rgba(30, 30, 50, 0.5);
-  }
-  
-  .ranking-table th, 
-  .ranking-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .ranking-table th {
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    font-size: 0.8em;
-  }
-  
-  .ranking-table tbody tr {
-    transition: background-color 0.3s ease;
-  }
-  
-  .ranking-table tbody tr:hover {
-    background-color: rgba(30, 30, 50, 0.3);
-  }
-  
-  .status-csc {
-    background-color: var(--accent-blue);
-    color: var(--text-primary);
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-size: 0.8em;
-  }
-  
-  .ranking-footer {
-    margin-top: 20px;
-    text-align: center;
-    color: var(--text-secondary);
-  }
-  
-  .loading, .error {
-    text-align: center;
-    padding: 20px;
-    color: var(--text-secondary);
-  }
-  /* Estilos anteriores mantenidos, añadir estos al final */
-.race-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .race-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-  }
+}

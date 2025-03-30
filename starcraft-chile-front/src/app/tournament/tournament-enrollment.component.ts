@@ -33,7 +33,7 @@ import { ActiveTournamentDto } from '../models/tournament.model';
       <div class="header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad Starcraft CHILE Logo" 
           class="header-logo"
         />
         <h1>Inscripción a Torneo</h1>
@@ -236,7 +236,7 @@ import { ActiveTournamentDto } from '../models/tournament.model';
     }
 
     .header-logo {
-      height: 60px;
+      height: 70px;
       width: auto;
       margin-right: 20px;
     }

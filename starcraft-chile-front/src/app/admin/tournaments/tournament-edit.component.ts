@@ -44,7 +44,7 @@ import { MatSelectModule } from '@angular/material/select';
       <div class="dashboard-header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad Starcraft CHILE Logo" 
           class="dashboard-logo"
         />
         <h1>{{ isNewTournament ? 'Crear' : 'Editar' }} Torneo</h1>
@@ -196,7 +196,12 @@ import { MatSelectModule } from '@angular/material/select';
             <mat-label>Plataforma de Streaming</mat-label>
             <input matInput formControlName="streamingPlatform">
           </mat-form-field>
-
+          <mat-form-field appearance="outline">
+            <mat-label>Link Challonge Torneo</mat-label>
+            <input matInput formControlName="challonge">
+          </mat-form-field>          
+        </div>
+        <div class="form-row">     
           <mat-form-field appearance="outline">
             <mat-label>Reglas</mat-label>
             <textarea matInput formControlName="rules"></textarea>
@@ -239,7 +244,7 @@ import { MatSelectModule } from '@angular/material/select';
     }
 
     .dashboard-logo {
-      height: 60px;
+      height: 70px;
       width: auto;
       margin-right: 20px;
     }

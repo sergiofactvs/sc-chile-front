@@ -29,13 +29,13 @@ import { AuthService, UserRegistrationRequest } from '../services/auth.service';
       <!-- Logo -->
       <img 
         src="/assets/logo.png" 
-        alt="Chilean StarCraft Championship Logo" 
+        alt="Comunidad Starcraft CHILE Logo" 
         class="logo"
       >
       
       <!-- Título -->
-      <h1 class="title">Chilean StarCraft</h1>
-      <p class="subtitle">CHAMPIONSHIP</p>
+      <h1 class="title">Comunidad Starcraft</h1>
+      <p class="subtitle">CHILE</p>
       
       <!-- Formulario de Autenticación -->
       <div class="card">
@@ -241,7 +241,7 @@ import { AuthService, UserRegistrationRequest } from '../services/auth.service';
       
       <!-- Footer -->
       <footer class="footer">
-        © 2025 Chilean StarCraft Championship
+        © 2025 Comunidad Starcraft CHILE
       </footer>
     </div>
   `,
@@ -268,9 +268,9 @@ import { AuthService, UserRegistrationRequest } from '../services/auth.service';
 
     .logo {
       width: auto;
-      height: 350px;
-      margin-top: 40px;
-      margin-bottom: 40px;
+      height: 450px;
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
 
     .title {

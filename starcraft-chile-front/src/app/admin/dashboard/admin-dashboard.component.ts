@@ -16,7 +16,7 @@ import environment from '../../../environments/environment';
       <div class="dashboard-header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad Starcraft CHILE Logo" 
           class="dashboard-logo"
         />
         <h1>Panel de Administración</h1>
@@ -146,7 +146,7 @@ import environment from '../../../environments/environment';
     }
 
     .dashboard-logo {
-      height: 60px;  // Tamaño ajustado
+      height: 70px;  // Tamaño ajustado
       width: auto;   // Mantener proporción
       margin-right: 20px;
     }

@@ -56,41 +56,49 @@ export interface ActiveTournamentDto {
   enrollmentId?: number;
   isActive: boolean;
   currentPhase?: string;
-}
-
-export interface TournamentPlayerDto {
-  playerId: number;
-  playerName?: string;
-  country?: string;
-  alias?: string;
-  gateway: number;
-  gatewayName?: string;
-  race?: string;
-  rank?: string;
-  rating?: number;
-  wins: number;
-  losses: number;
-  standing?: number;
-  totalGames: number;
-  winRate: number;
-  rankingPosition: number;
+  challonge?: string;
 }
 
 export interface ActiveTournamentWithPlayersDto {
   id: number;
-  name?: string;
-  description?: string;
+  name: string;
+  description: string;
   qualificationStartDate: string;
   qualificationEndDate: string;
   tournamentStartDate: string;
   tournamentEndDate: string;
   prizePool: number;
-  currency?: string;
-  location?: string;
-  format?: string;
-  streamingPlatform?: string;
-  organizedBy?: string;
+  currency: string;
+  location: string;
+  format: string;
+  streamingPlatform: string;
+  organizedBy: string;
+  rules: string;
   totalPlayers: number;
-  currentPhase?: string;
-  players?: TournamentPlayerDto[];
+  totalQualifiedPlayers: number;
+  minimumGames: number;
+  currentPhase: string;
+  challonge?: string;
+  players: TournamentPlayerDto[];
+}
+
+export interface TournamentPlayerDto {
+  playerId: number;
+  playerName: string;
+  country: string;
+  alias: string;
+  gateway: number;
+  gatewayName: string;
+  race: string;
+  rank: string;
+  rating: number;
+  wins: number;
+  losses: number;
+  standing?: number;
+  rankingPosition: number;
+  qualificationPosition?: number;
+  isQualified: boolean;
+  totalGames: number;
+  winRate: number;
+  winRateFormatted?: string;
 }

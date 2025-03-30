@@ -1,0 +1,172 @@
+<div class="landing-container">
+    <div class="login-section">
+      <!-- Mostrar botón de login si no está autenticado -->
+      <button 
+        *ngIf="!isAuthenticated"
+        mat-raised-button 
+        class="login-button"
+        [routerLink]="['/auth']"
+      >
+        Iniciar Sesión / Registro
+      </button>
+      
+      <!-- Mostrar perfil del usuario si está autenticado -->
+      <div *ngIf="isAuthenticated" class="user-profile-section">
+        <button 
+          mat-raised-button
+          class="profile-button"
+          [matMenuTriggerFor]="userMenu"
+        >
+          <span class="user-alias">{{ primaryAlias || userName }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        
+        <mat-menu #userMenu="matMenu" class="user-menu">
+          <a mat-menu-item [routerLink]="['/profile']">
+            <mat-icon>person</mat-icon>
+            <span>Mi Perfil</span>
+          </a>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  
+    <div class="container">
+      <!-- Logo -->
+      <img 
+        src="/assets/logo.png" 
+        alt="Comunidad StarCraft CHILE" 
+        class="logo"
+      >
+      
+      <!-- Título -->
+      <h1 class="title">Comunidad StarCraft</h1>
+      <p class="subtitle">CHILE</p>
+      
+      <!-- Loading del torneo -->
+      <div *ngIf="isLoadingTournament" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Cargando torneo...</p>
+      </div>
+      
+      <!-- Anuncio del torneo activo -->
+      <div *ngIf="!isLoadingTournament && activeTournament" class="tournament-card card">
+        <h2 class="tournament-name">{{ activeTournament.name }}</h2>
+        <div class="tournament-phase" [ngClass]="{'phase-qualification': activeTournament.currentPhase === 'Qualification', 'phase-tournament': activeTournament.currentPhase === 'Tournament', 'phase-upcoming': activeTournament.currentPhase === 'Upcoming', 'phase-completed': activeTournament.currentPhase === 'Completed'}">
+          {{ activeTournament.currentPhase || 'Clasificación' }}
+        </div>
+        
+        <div class="tournament-info">
+          <div class="tournament-dates">
+            <p class="date-label">Clasificación:</p>
+            <p class="date-value">{{ activeTournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.qualificationEndDate | date:'dd-MM-yyyy' }}</p>
+          </div>
+          
+          <div class="tournament-dates">
+            <p class="date-label">Torneo Principal:</p>
+            <p class="date-value">{{ activeTournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.tournamentEndDate | date:'dd-MM-yyyy' }}</p>
+          </div>
+          
+          <div class="tournament-prize" *ngIf="activeTournament.prizePool">
+            <p class="prize-label">Premio:</p>
+            <p class="prize-value">{{ activeTournament.prizePool }} {{ activeTournament.currency || 'USD' }}</p>
+          </div>
+          
+          <div class="tournament-players">
+            <p class="players-label">Jugadores inscritos:</p>
+            <p class="players-value">{{ activeTournament.totalPlayers }}</p>
+          </div>
+  
+          <!-- Mostrar mensaje especial si el torneo está en fase de torneo -->
+          <div *ngIf="activeTournament.currentPhase === 'Tournament'" class="tournament-phase-message">
+            <p><mat-icon>info</mat-icon> El torneo ha comenzado y las inscripciones están cerradas.</p>
+          </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="tournament-actions">
+          <button 
+            mat-raised-button 
+            class="view-button"
+            [routerLink]="['/active-tournament']"
+          >
+            <mat-icon>visibility</mat-icon>
+            VER TORNEO
+          </button>
+         
+          <ng-container *ngIf="isAuthenticated && activeTournament.currentPhase === 'Qualification'">
+            <button 
+              *ngIf="!isUserEnrolled"
+              mat-raised-button 
+              class="enter-button"
+              [routerLink]="['/enroll']"
+            >
+              <mat-icon>how_to_reg</mat-icon>
+              INSCRIBIRME
+            </button>
+            
+            <div *ngIf="isUserEnrolled" class="already-enrolled">
+              <mat-icon class="enrolled-icon">check_circle</mat-icon>
+              Ya estás inscrito
+            </div>
+          </ng-container>
+          
+          <button 
+            *ngIf="!isAuthenticated && activeTournament.currentPhase === 'Qualification'"
+            mat-raised-button 
+            class="enter-button"
+            [routerLink]="['/auth']"
+          >
+            REGÍSTRATE PARA PARTICIPAR
+          </button>
+  
+          <!-- Mensaje para fase de torneo cuando no está inscrito -->
+          <div *ngIf="!isUserEnrolled && activeTournament.currentPhase === 'Tournament'" class="tournament-closed">
+            <mat-icon class="closed-icon">event_busy</mat-icon>
+            Inscripciones cerradas
+          </div>
+        </div>
+  
+        <!-- Ranking de Jugadores Clasificados -->
+        <div *ngIf="!isLoadingTournament && activeTournament" class="ranking-section">
+          <h2 class="section-title">Jugadores Clasificados</h2>
+          <app-qualified-players 
+            [displayLimit]="8" 
+            [showViewMoreButton]="true"
+            [showTournamentInfo]="false"
+            [showPaginator]="false"
+          ></app-qualified-players>
+        </div>
+
+         <!-- Botón de Challonge que usa el campo challonge del activeTournament -->
+         <div *ngIf="activeTournament.currentPhase === 'Tournament' && activeTournament.challonge" class="challonge-section">
+            <h2 class="section-title">Brackets del Torneo</h2>
+            <div class="challonge-container">
+              <iframe 
+                [src]="getSafeChallongeUrl(activeTournament.challonge)" 
+                width="100%" 
+                height="500" 
+                frameborder="0" 
+                scrolling="auto" 
+                allowtransparency="true">
+              </iframe>
+            </div>
+          </div>
+      </div>
+      
+      <!-- Mensaje si no hay torneo activo -->
+      <div *ngIf="!isLoadingTournament && !activeTournament" class="card">
+        <p class="coming-soon">PRÓXIMAMENTE</p>
+        <p class="tournament-date">Nuevo Torneo</p>
+        <p class="no-tournament-message">No hay torneos activos en este momento. Vuelve pronto para más información.</p>
+      </div>
+      
+      <!-- Footer -->
+      <footer class="footer">
+        © 2025 Comunidad StarCraft CHILE
+      </footer>
+    </div>
+  </div>

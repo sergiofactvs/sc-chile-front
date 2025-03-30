@@ -32,7 +32,7 @@ import { FormsModule } from '@angular/forms';
       <div class="dashboard-header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad Starcraft CHILE Logo" 
           class="dashboard-logo"
         />
         <h1>Administración de Usuarios</h1>
@@ -150,7 +150,7 @@ import { FormsModule } from '@angular/forms';
     }
 
     .dashboard-logo {
-      height: 60px;
+      height: 70px;
       width: auto;
       margin-right: 20px;
     }

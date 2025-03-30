@@ -24,7 +24,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
       <div class="dashboard-header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad Starcraft CHILE Logo" 
           class="dashboard-logo"
         />
         <h1>Administración de Torneos</h1>
@@ -131,7 +131,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
     }
 
     .dashboard-logo {
-      height: 60px;
+      height: 70px;
       width: auto;
       margin-right: 20px;
     }

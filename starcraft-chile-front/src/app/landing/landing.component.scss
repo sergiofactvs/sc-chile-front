@@ -1,0 +1,459 @@
+/* src/app/landing/landing.component.scss */
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #000000;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .landing-container {
+    background-color: #000000;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+  }
+  
+  .login-section {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+  
+  .login-button {
+    background-color: #D52B1E !important;
+    color: white !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    padding: 8px 16px;
+  }
+  
+  .user-profile-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-button {
+    background-color: #D52B1E !important;
+    color: white !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-alias {
+    margin-right: 8px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Estilos para el menú desplegable */
+  ::ng-deep .mat-mdc-menu-panel.user-menu {
+    background-color: #1A1A2E !important;
+    border-left: 3px solid #D52B1E !important;
+  }
+  
+  ::ng-deep .mat-mdc-menu-item {
+    color: white !important;
+  }
+  
+  ::ng-deep .mat-mdc-menu-item:hover {
+    background-color: rgba(213, 43, 30, 0.2) !important;
+  }
+  
+  ::ng-deep .mat-mdc-menu-item .mat-icon {
+    color: #D52B1E !important;
+  }
+  
+  /* Asegurarse de que el texto dentro del menú sea visible */
+  ::ng-deep .mat-mdc-menu-item span {
+    color: white !important;
+  }
+  
+  /* Asegurarse de que el color de fondo del panel sea visible */
+  ::ng-deep .mat-mdc-menu-content {
+    background-color: #1A1A2E !important;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  .logo {
+    width: auto;
+    height: 350px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 10px 0;
+  }
+  
+  .subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin: 10px 0 40px 0;
+  }
+  
+  /* Estado de carga */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #D52B1E;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  
+  /* Card de torneo */
+  .card {
+    text-align: center;
+    padding: 30px;
+    border-radius: 8px;
+    background-color: rgba(10, 10, 20, 0.7);
+    border-left: 3px solid #d52b1e;
+    max-width: 800px;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .tournament-card {
+    max-width: 500px;
+  }
+  
+  .tournament-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: white;
+  }
+  
+  .tournament-phase {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: rgba(213, 43, 30, 0.3);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .tournament-info {
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .tournament-dates, .tournament-prize, .tournament-players {
+    margin-bottom: 15px;
+  }
+  
+  .date-label, .prize-label, .players-label {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+  
+  .date-value, .prize-value, .players-value {
+    color: white;
+    font-weight: bold;
+    margin: 0;
+    padding-left: 10px;
+    border-left: 2px solid #D52B1E;
+  }
+  
+  .players-value {
+    color: #D52B1E;
+    font-size: 1.2rem;
+  }
+  
+  .tournament-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+  }
+  
+  .view-button {
+    background-color: #1E90FF !important;
+    color: white !important;
+    font-weight: bold;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  
+  .view-button mat-icon {
+    margin-right: 8px;
+  }
+  
+  .enter-button {
+    background-color: #d52b1e !important;
+    color: white !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+  }
+  
+  .enter-button mat-icon {
+    margin-right: 8px;
+  }
+  
+  .already-enrolled {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+  }
+  
+  .enrolled-icon {
+    margin-right: 8px;
+  }
+  
+  /* Mensaje si no hay torneo */
+  .coming-soon {
+    font-size: 1.2rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .tournament-date {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .no-tournament-message {
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+  
+  /* Sección de Ranking */
+  .ranking-section {
+    margin-top: 20px;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+  }
+  
+  .footer {
+    margin-top: auto;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .logo {
+      height: 250px;
+    }
+    
+    .title {
+      font-size: 2.5rem;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+    }
+    
+    .tournament-date {
+      font-size: 2rem;
+    }
+  
+    .login-section {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .logo {
+      height: 180px;
+    }
+    
+    .title {
+      font-size: 1.8rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+    
+    .tournament-date {
+      font-size: 1.6rem;
+    }
+  }
+
+  /* Estilos para las fases del torneo */
+.tournament-phase {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+  
+  .phase-qualification {
+    background-color: rgba(213, 43, 30, 0.3);
+    color: white;
+  }
+  
+  .phase-tournament {
+    background-color: rgba(33, 150, 243, 0.3);
+    color: white;
+  }
+  
+  .phase-upcoming {
+    background-color: rgba(156, 39, 176, 0.3);
+    color: white;
+  }
+  
+  .phase-completed {
+    background-color: rgba(76, 175, 80, 0.3);
+    color: white;
+  }
+  
+  /* Mensaje de fase de torneo */
+  .tournament-phase-message {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left: 3px solid #2196F3;
+    padding: 10px 15px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tournament-phase-message p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tournament-phase-message mat-icon {
+    margin-right: 8px;
+    color: #2196F3;
+  }
+  
+  /* Mensaje de inscripciones cerradas */
+  .tournament-closed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(158, 158, 158, 0.2);
+    color: #9E9E9E;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  
+  .closed-icon {
+    margin-right: 8px;
+  }
+
+  .tournament-card.card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto 20px auto; /* Centrar con márgenes automáticos */
+  }
+  
+  /* Ajustar el contenedor padre para mantener centrado el contenido */
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Esto centra horizontalmente los elementos flex hijos */
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo de contenido */
+    padding: 40px 20px;
+    box-sizing: border-box;
+    margin: 0 auto; /* Centrar el contenedor mismo */
+  }
+  
+  /* La sección de Challonge también centrada y con ancho completo */
+  .challonge-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .challonge-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Si hay secciones internas que también necesitan mantener alineación */
+  .tournament-info, .tournament-actions, .ranking-section {
+    width: 100%;
+     
+  }

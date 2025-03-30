@@ -1,60 +1,99 @@
+<!-- src/app/current-season-ranking/current-season-ranking.component.html -->
 <div class="ranking-container">
-    <div class="ranking-header">
-      <h2>Ranking de Jugadores</h2>
-      <div class="tournament-info">
-        <div class="prize-pool">
-          <span class="label">Recaudación para torneo del 16 Marzo 2025</span>
-          <span class="amount">111.08 USD</span>
-          <span class="goal">Meta: 500 USD</span>
+  <div class="ranking-header">
+    <h2>Ranking de Jugadores</h2>
+    <div class="tournament-info" *ngIf="tournamentData">
+      <div class="tournament-details">
+        <h3>{{ tournamentData.name }}</h3>
+        <div class="tournament-dates">
+          <span class="date-label">Fase de Clasificación:</span>
+          <span class="date-value">{{ formatDate(tournamentData.qualificationStartDate) }} - {{ formatDate(tournamentData.qualificationEndDate) }}</span>
         </div>
-        <button class="inscribe-btn">INSCRÍBETE AQUÍ</button>
       </div>
-    </div>
-  
-    <ng-container *ngIf="!isLoading; else loadingTemplate">
-      <ng-container *ngIf="!error; else errorTemplate">
-        <table class="ranking-table">
-          <thead>
-            <tr>
-              <th>POS</th>
-              <th>JUGADOR</th>
-              <th>GATEWAY</th>
-              <th>MMR</th>
-              <th>RAZA</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let player of ranking; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ player.alias }}</td>
-              <td>{{ player.gateway_name }}</td>
-              <td>{{ player.rating }}</td>
-              <td>
-                <div class="race-cell">
-                  <img 
-                    [src]="getRaceIcon(player.race)" 
-                    [alt]="player.race" 
-                    class="race-icon"
-                  >
-                  
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </ng-container>
-    </ng-container>
-  
-    <ng-template #loadingTemplate>
-      <div class="loading">Cargando ranking...</div>
-    </ng-template>
-  
-    <ng-template #errorTemplate>
-      <div class="error">{{ error }}</div>
-    </ng-template>
-  
-    <div class="ranking-footer">
-      <p>¿Quieres competir en el Campeonato Nacional?</p>
-      <p>Requisitos: Mínimo 20 partidas rankeadas y estar en el Top 8 del ranking MMR.</p>
+      <div class="prize-pool">
+        <span class="label">Premio del Torneo</span>
+        <span class="amount">{{ tournamentData.prizePool }} {{ tournamentData.currency }}</span>
+        <div class="qualification-stats">
+          <span class="stats-item">Clasificados: <strong>{{ tournamentData.totalQualifiedPlayers }}</strong></span>
+          <span class="stats-item">Total Jugadores: <strong>{{ tournamentData.totalPlayers }}</strong></span>
+          <span class="stats-item">Mínimo Partidas: <strong>{{ tournamentData.minimumGames }}</strong></span>
+        </div>
+      </div>
+      <a [routerLink]="['/enroll']" class="inscribe-btn">INSCRÍBETE AQUÍ</a>
     </div>
   </div>
+
+  <ng-container *ngIf="!isLoading; else loadingTemplate">
+    <ng-container *ngIf="!error; else errorTemplate">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th class="pos-column">POS</th>
+            <th>JUGADOR</th>
+            <th>GATEWAY</th>
+            <th>MMR</th>
+            <th>RÉCORD</th>
+            <th>% VICTORIAS</th>
+            <th>RAZA</th>
+            <th>ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let player of players" 
+              [class.qualified-player]="player.isQualified" 
+              [class.top-player]="player.qualificationPosition && player.qualificationPosition <= 8">
+            <td class="pos-column" [class]="getRankingPositionClass(player.rankingPosition)">
+              {{ player.rankingPosition }}
+              <span *ngIf="player.qualificationPosition" class="qualification-badge">
+                #{{ player.qualificationPosition }}
+              </span>
+            </td>
+            <td>{{ player.alias }}</td>
+            <td>{{ player.gatewayName }}</td>
+            <td>{{ player.rating }}</td>
+            <td>{{ player.wins }}-{{ player.losses }}</td>
+            <td>{{ player.winRateFormatted }}</td>
+            <td>
+              <div class="race-cell">
+                <img 
+                  [src]="getRaceIcon(player.race)" 
+                  [alt]="player.race" 
+                  class="race-icon"
+                >
+              </div>
+            </td>
+            <td>
+              <div class="qualification-status" 
+                   [class.qualified]="player.isQualified"
+                   [class.top-qualified]="player.qualificationPosition && player.qualificationPosition <= 8"
+                   [matTooltip]="getPlayerStatusTooltip(player)">
+                <span *ngIf="player.isQualified && player.qualificationPosition && player.qualificationPosition <= 8" class="status-text">
+                  Clasificado
+                </span>
+                <span *ngIf="player.isQualified && (!player.qualificationPosition || player.qualificationPosition > 8)" class="status-text">
+                  Fuera del top 8
+                </span>
+                <span *ngIf="!player.isQualified" class="status-text">
+                  {{ player.totalGames }}/{{ minimumGames }} partidas
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #loadingTemplate>
+    <div class="loading">Cargando ranking...</div>
+  </ng-template>
+
+  <ng-template #errorTemplate>
+    <div class="error">{{ error }}</div>
+  </ng-template>
+
+  <div class="ranking-footer">
+    <p>¿Quieres competir en el Campeonato Nacional?</p>
+    <p>Requisitos: Mínimo {{ minimumGames }} partidas rankeadas y estar en el Top 8 del ranking MMR.</p>
+  </div>
+</div>

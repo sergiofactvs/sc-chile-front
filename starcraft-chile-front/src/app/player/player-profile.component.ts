@@ -55,7 +55,7 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
       <div class="profile-header">
         <img 
           src="/assets/logo.png" 
-          alt="Chilean StarCraft Championship Logo" 
+          alt="Comunidad StarCraft CHILE Logo" 
           class="header-logo"
         />
         <h1>Perfil de Jugador</h1>
@@ -348,7 +348,7 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
     }
 
     .header-logo {
-      height: 60px;
+      height: 70px;
       width: auto;
       margin-right: 20px;
     }
