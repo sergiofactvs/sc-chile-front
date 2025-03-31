@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { QualifiedPlayer, QualifiedPlayersResponse } from '../services/tournament.service';
 import { HttpClient } from '@angular/common/http';
-import  environment  from '../../environments/environment';
+import environment from '../../environments/environment';
 
 @Component({
   selector: 'app-qualified-players',
@@ -48,11 +48,13 @@ import  environment  from '../../environments/environment';
             <!-- Position Column -->
             <ng-container matColumnDef="position">
               <th mat-header-cell *matHeaderCellDef>#</th>
-              <td mat-cell *matCellDef="let player">{{ player.rankingPosition }}</td>
+              <td mat-cell *matCellDef="let player" [class.position-top]="player.rankingPosition <= 3" [class.position-qualified]="player.rankingPosition <= 8">
+                {{ player.rankingPosition }}
+              </td>
             </ng-container>
 
             <!-- Alias Column -->
-             <ng-container matColumnDef="alias">
+            <ng-container matColumnDef="alias">
               <th mat-header-cell *matHeaderCellDef>Jugador</th>
               <td mat-cell *matCellDef="let player">
                 <div class="player-cell">
@@ -72,7 +74,11 @@ import  environment  from '../../environments/environment';
                     [alt]="player.race" 
                     class="race-icon"
                   >
-                  {{ player.race || 'N/A' }}
+                  <span class="race-name" [ngClass]="{
+                    'terran': player.race?.toLowerCase().includes('terran'),
+                    'protoss': player.race?.toLowerCase().includes('protoss'),
+                    'zerg': player.race?.toLowerCase().includes('zerg')
+                  }">{{ player.race || 'N/A' }}</span>
                 </div>
               </td>
             </ng-container>
@@ -86,7 +92,7 @@ import  environment  from '../../environments/environment';
             <!-- Rating Column -->
             <ng-container matColumnDef="rating">
               <th mat-header-cell *matHeaderCellDef>MMR</th>
-              <td mat-cell *matCellDef="let player">{{ player.rating }}</td>
+              <td mat-cell *matCellDef="let player" class="rating-cell">{{ player.rating }}</td>
             </ng-container>
 
             <!-- Record Column -->
@@ -94,11 +100,14 @@ import  environment  from '../../environments/environment';
               <th mat-header-cell *matHeaderCellDef>W-L</th>
               <td mat-cell *matCellDef="let player">
                 <span class="wins">{{ player.wins }}</span>-<span class="losses">{{ player.losses }}</span>
+                <span class="win-rate">({{ calculateWinRate(player.wins, player.losses) }}%)</span>
               </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                [class.qualified-row]="row.rankingPosition <= 8"
+                [class.top-row]="row.rankingPosition <= 3"></tr>
           </table>
 
           <mat-paginator 
@@ -108,6 +117,7 @@ import  environment  from '../../environments/environment';
             [pageSizeOptions]="[5, 10, 20]"
             (page)="onPageChange($event)"
             showFirstLastButtons
+            class="custom-paginator"
           ></mat-paginator>
         </div>
 
@@ -116,7 +126,7 @@ import  environment  from '../../environments/environment';
         </div>
 
         <div *ngIf="showViewMoreButton && qualifiedPlayersData.players.length > displayLimit" class="view-more-container">
-          <button mat-raised-button color="primary" [routerLink]="['/active-tournament']">
+          <button mat-raised-button [routerLink]="['/active-tournament']" class="view-more-button">
             Ver Ranking Completo
           </button>
         </div>
@@ -124,9 +134,35 @@ import  environment  from '../../environments/environment';
     </div>
   `,
   styles: [`
-     .qualified-players-container {
+    /* Variables (Asegurarse que coincidan con el landing) */
+    :host {
+      --primary-color: #0B3D91;
+      --secondary-color: #DA291C;
+      --bg-dark: #0A0C1B;
+      --bg-darker: #070810;
+      --bg-card: #111326;
+      --text-primary: #ffffff;
+      --text-secondary: #aaaaaa;
+      --text-tertiary: #666666;
+      --border-color: rgba(255, 255, 255, 0.1);
+      
+      --terran-color: #57B5E7;
+      --protoss-color: #8DD3C7;
+      --zerg-color: #FBBF72;
+      
+      --font-main: 'Roboto', sans-serif;
+      --font-special: 'Orbitron', sans-serif;
+      
+      display: block;
+      width: 100%;
+    }
+    
+    .qualified-players-container {
       width: 100%;
       margin-bottom: 20px;
+      background-color: var(--bg-card);
+      border-radius: 0.5rem;
+      
     }
 
     .loading-container, .error-container {
@@ -141,7 +177,7 @@ import  environment  from '../../environments/environment';
     .loading-spinner {
       border: 4px solid rgba(255, 255, 255, 0.1);
       border-radius: 50%;
-      border-top: 4px solid #D52B1E;
+      border-top: 4px solid var(--secondary-color);
       width: 30px;
       height: 30px;
       animation: spin 1s linear infinite;
@@ -169,14 +205,16 @@ import  environment  from '../../environments/environment';
     .tournament-info h2 {
       margin-top: 0;
       margin-bottom: 10px;
-      color: white;
+      color: var(--text-primary);
+      font-family: var(--font-special);
+      font-size: 1.5rem;
     }
 
     .tournament-phase-badge {
       display: inline-block;
       padding: 3px 8px;
       background-color: rgba(213, 43, 30, 0.3);
-      color: white;
+      color: var(--text-primary);
       border-radius: 4px;
       font-size: 0.9rem;
       font-weight: bold;
@@ -184,13 +222,17 @@ import  environment  from '../../environments/environment';
     }
 
     .tournament-requirement {
-      color: #aaa;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       margin-bottom: 15px;
     }
 
     .table-container {
       overflow-x: auto;
+      margin-bottom: 1rem;
+      background-color: rgba(30, 30, 50, 0.2);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
     }
 
     .qualified-players-table {
@@ -208,26 +250,46 @@ import  environment  from '../../environments/environment';
     }
 
     ::ng-deep .mat-mdc-header-cell {
-      color: white !important;
+      color: var(--text-primary) !important;
       background-color: transparent !important;
       font-weight: bold !important;
       border-bottom: none !important;
       text-align: center !important;
+      font-size: 0.85rem !important;
+      letter-spacing: 0.05em !important;
     }
 
     ::ng-deep .mat-mdc-row {
       background-color: transparent !important;
-    }
-
-    ::ng-deep .mat-mdc-cell {
-      color: white !important;
-      background-color: transparent !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      text-align: center !important;
+      transition: background-color 0.2s ease !important;
     }
 
     ::ng-deep .mat-mdc-row:hover {
-      background-color: rgba(255,255,255,0.1) !important;
+      background-color: rgba(255,255,255,0.05) !important;
+    }
+
+    ::ng-deep .mat-mdc-row.qualified-row {
+      background-color: rgba(11, 61, 145, 0.1) !important;
+    }
+
+    ::ng-deep .mat-mdc-row.qualified-row:hover {
+      background-color: rgba(11, 61, 145, 0.15) !important;
+    }
+
+    ::ng-deep .mat-mdc-row.top-row {
+      background-color: rgba(11, 61, 145, 0.2) !important;
+    }
+
+    ::ng-deep .mat-mdc-row.top-row:hover {
+      background-color: rgba(11, 61, 145, 0.25) !important;
+    }
+
+    ::ng-deep .mat-mdc-cell {
+      color: var(--text-primary) !important;
+      background-color: transparent !important;
+      border-bottom: 1px solid var(--border-color) !important;
+      text-align: center !important;
+      font-size: 0.95rem !important;
     }
 
     .player-cell {
@@ -237,14 +299,14 @@ import  environment  from '../../environments/environment';
     }
 
     .player-link {
-      color: #1E90FF;
+      color: var(--primary-color);
       text-decoration: none;
       transition: color 0.2s ease;
       font-weight: 500;
     }
 
     .player-link:hover {
-      color: #D52B1E;
+      color: var(--secondary-color);
       text-decoration: underline;
     }
 
@@ -260,18 +322,59 @@ import  environment  from '../../environments/environment';
       margin-right: 5px;
     }
 
+    .race-name {
+      font-weight: 500;
+    }
+
+    .race-name.terran {
+      color: var(--terran-color);
+    }
+
+    .race-name.protoss {
+      color: var(--protoss-color);
+    }
+
+    .race-name.zerg {
+      color: var(--zerg-color);
+    }
+
+    .rating-cell {
+      font-weight: 600;
+      color: #1E90FF !important;
+    }
+
     .wins {
       color: #4CAF50;
+      font-weight: 600;
     }
 
     .losses {
       color: #F44336;
+      font-weight: 600;
+    }
+
+    .win-rate {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-left: 5px;
+    }
+
+    .position-top {
+      color: gold !important;
+      font-weight: bold;
+    }
+
+    .position-qualified {
+      color: #1E90FF !important;
+      font-weight: bold;
     }
 
     .no-players {
       text-align: center;
       padding: 20px;
-      color: #aaa;
+      color: var(--text-secondary);
+      background-color: rgba(30, 30, 50, 0.2);
+      border-radius: 0.5rem;
     }
 
     .view-more-container {
@@ -279,26 +382,69 @@ import  environment  from '../../environments/environment';
       margin-top: 20px;
     }
 
+    .view-more-button {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      padding: 0.5rem 1.5rem !important;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .view-more-button:hover {
+      background-color: rgba(11, 61, 145, 0.8) !important;
+    }
+
     /* Estilos del paginador */
-    ::ng-deep .mat-mdc-paginator {
+    ::ng-deep .custom-paginator {
       background-color: transparent !important;
-      color: white !important;
+      color: var(--text-primary) !important;
+      margin-top: 10px;
     }
 
-    ::ng-deep .mat-mdc-paginator-container {
-      color: white !important;
+    ::ng-deep .custom-paginator .mat-mdc-paginator-container {
+      color: var(--text-primary) !important;
     }
 
-    ::ng-deep .mat-mdc-paginator-range-label {
-      color: white !important;
+    ::ng-deep .custom-paginator .mat-mdc-paginator-range-label {
+      color: var(--text-primary) !important;
     }
 
-    ::ng-deep .mat-mdc-paginator-icon {
-      fill: white !important;
+    ::ng-deep .custom-paginator .mat-mdc-paginator-icon {
+      fill: var(--text-primary) !important;
     }
 
-    ::ng-deep .mat-mdc-select-value-text {
-      color: white !important;
+    ::ng-deep .custom-paginator .mat-mdc-select-value-text {
+      color: var(--text-primary) !important;
+    }
+
+    /* Media queries para responsividad */
+    @media (max-width: 768px) {
+      .table-container {
+        margin: 0 -0.5rem;
+      }
+      
+      ::ng-deep .mat-mdc-header-cell, 
+      ::ng-deep .mat-mdc-cell {
+        padding: 8px 4px !important;
+      }
+      
+      .win-rate {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      ::ng-deep .mat-mdc-header-cell, 
+      ::ng-deep .mat-mdc-cell {
+        padding: 8px 2px !important;
+        font-size: 0.8rem !important;
+      }
+      
+      .race-icon {
+        margin-right: 2px;
+        width: 16px;
+        height: 16px;
+      }
     }
   `]
 })
@@ -428,5 +574,14 @@ export class QualifiedPlayersComponent implements OnInit {
     }
     
     return '';
+  }
+  
+  // Calcular porcentaje de victorias
+  calculateWinRate(wins: number, losses: number): string {
+    if (wins === 0 && losses === 0) return '0';
+    
+    const total = wins + losses;
+    const winRate = (wins / total) * 100;
+    return winRate.toFixed(1);
   }
 }

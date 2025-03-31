@@ -1,148 +1,181 @@
+<!-- src/app/landing/landing.component.html -->
 <div class="landing-container">
-    <div class="login-section">
-      <!-- Mostrar botón de login si no está autenticado -->
-      <button 
-        *ngIf="!isAuthenticated"
-        mat-raised-button 
-        class="login-button"
-        [routerLink]="['/auth']"
-      >
-        Iniciar Sesión / Registro
-      </button>
-      
-      <!-- Mostrar perfil del usuario si está autenticado -->
-      <div *ngIf="isAuthenticated" class="user-profile-section">
-        <button 
-          mat-raised-button
-          class="profile-button"
-          [matMenuTriggerFor]="userMenu"
-        >
-          <span class="user-alias">{{ primaryAlias || userName }}</span>
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        
-        <mat-menu #userMenu="matMenu" class="user-menu">
-          <a mat-menu-item [routerLink]="['/profile']">
-            <mat-icon>person</mat-icon>
-            <span>Mi Perfil</span>
-          </a>
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>exit_to_app</mat-icon>
-            <span>Cerrar Sesión</span>
-          </button>
-        </mat-menu>
-      </div>
-    </div>
-  
-    <div class="container">
-      <!-- Logo -->
-      <img 
-        src="/assets/logo.png" 
-        alt="Comunidad StarCraft CHILE" 
-        class="logo"
-      >
-      
-      <!-- Título -->
-      <h1 class="title">Comunidad StarCraft</h1>
-      <p class="subtitle">CHILE</p>
-      
-      <!-- Loading del torneo -->
-      <div *ngIf="isLoadingTournament" class="loading-container">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Cargando torneo...</p>
-      </div>
-      
-      <!-- Anuncio del torneo activo -->
-      <div *ngIf="!isLoadingTournament && activeTournament" class="tournament-card card">
-        <h2 class="tournament-name">{{ activeTournament.name }}</h2>
-        <div class="tournament-phase" [ngClass]="{'phase-qualification': activeTournament.currentPhase === 'Qualification', 'phase-tournament': activeTournament.currentPhase === 'Tournament', 'phase-upcoming': activeTournament.currentPhase === 'Upcoming', 'phase-completed': activeTournament.currentPhase === 'Completed'}">
-          {{ activeTournament.currentPhase || 'Clasificación' }}
+    <!-- Navbar -->
+    <nav class="nav-bar">
+      <div class="nav-content">
+        <div class="logo-section">
+          <img src="https://static.readdy.ai/image/6929ea911451f6a77b70511112d43f5f/0116ddf4c957ced8aa6ace99961f89b6.png" alt="Starcraft Chile Logo" class="logo-img">
+          <span class="logo-text">SC-CHL</span>
         </div>
         
-        <div class="tournament-info">
-          <div class="tournament-dates">
-            <p class="date-label">Clasificación:</p>
-            <p class="date-value">{{ activeTournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.qualificationEndDate | date:'dd-MM-yyyy' }}</p>
+        <div class="nav-links" [class.mobile-open]="mobileMenuOpen">
+          <a [routerLink]="['/']" class="nav-link active">Liga</a>
+          <a [routerLink]="['/currentseason']" class="nav-link">Ranking</a>
+          <a href="#comunidad" class="nav-link">Comunidad</a>
+          <a href="#donar" class="nav-link">Donar</a>
+          
+          <!-- Login/Profile buttons -->
+          <div *ngIf="!isAuthenticated" class="auth-buttons">
+            <button [routerLink]="['/auth']" class="login-button">
+              Iniciar Sesión
+            </button>
           </div>
           
-          <div class="tournament-dates">
-            <p class="date-label">Torneo Principal:</p>
-            <p class="date-value">{{ activeTournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.tournamentEndDate | date:'dd-MM-yyyy' }}</p>
-          </div>
-          
-          <div class="tournament-prize" *ngIf="activeTournament.prizePool">
-            <p class="prize-label">Premio:</p>
-            <p class="prize-value">{{ activeTournament.prizePool }} {{ activeTournament.currency || 'USD' }}</p>
-          </div>
-          
-          <div class="tournament-players">
-            <p class="players-label">Jugadores inscritos:</p>
-            <p class="players-value">{{ activeTournament.totalPlayers }}</p>
-          </div>
-  
-          <!-- Mostrar mensaje especial si el torneo está en fase de torneo -->
-          <div *ngIf="activeTournament.currentPhase === 'Tournament'" class="tournament-phase-message">
-            <p><mat-icon>info</mat-icon> El torneo ha comenzado y las inscripciones están cerradas.</p>
-          </div>
-        </div>
-        
-        <!-- Botones de acción -->
-        <div class="tournament-actions">
-          <button 
-            mat-raised-button 
-            class="view-button"
-            [routerLink]="['/active-tournament']"
-          >
-            <mat-icon>visibility</mat-icon>
-            VER TORNEO
-          </button>
-         
-          <ng-container *ngIf="isAuthenticated && activeTournament.currentPhase === 'Qualification'">
-            <button 
-              *ngIf="!isUserEnrolled"
-              mat-raised-button 
-              class="enter-button"
-              [routerLink]="['/enroll']"
-            >
-              <mat-icon>how_to_reg</mat-icon>
-              INSCRIBIRME
+          <div *ngIf="isAuthenticated" class="auth-buttons">
+            <button [matMenuTriggerFor]="userMenu" class="profile-button">
+              <span class="user-alias">{{ primaryAlias || userName }}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
             </button>
             
-            <div *ngIf="isUserEnrolled" class="already-enrolled">
-              <mat-icon class="enrolled-icon">check_circle</mat-icon>
-              Ya estás inscrito
-            </div>
-          </ng-container>
-          
-          <button 
-            *ngIf="!isAuthenticated && activeTournament.currentPhase === 'Qualification'"
-            mat-raised-button 
-            class="enter-button"
-            [routerLink]="['/auth']"
-          >
-            REGÍSTRATE PARA PARTICIPAR
-          </button>
-  
-          <!-- Mensaje para fase de torneo cuando no está inscrito -->
-          <div *ngIf="!isUserEnrolled && activeTournament.currentPhase === 'Tournament'" class="tournament-closed">
-            <mat-icon class="closed-icon">event_busy</mat-icon>
-            Inscripciones cerradas
+            <mat-menu #userMenu="matMenu" class="user-menu">
+              <a mat-menu-item [routerLink]="['/profile']">
+                <mat-icon>person</mat-icon>
+                <span>Mi Perfil</span>
+              </a>
+              <button mat-menu-item (click)="logout()">
+                <mat-icon>exit_to_app</mat-icon>
+                <span>Cerrar Sesión</span>
+              </button>
+            </mat-menu>
           </div>
         </div>
-  
-        <!-- Ranking de Jugadores Clasificados -->
-        <div *ngIf="!isLoadingTournament && activeTournament" class="ranking-section">
-          <h2 class="section-title">Jugadores Clasificados</h2>
-          <app-qualified-players 
-            [displayLimit]="8" 
-            [showViewMoreButton]="true"
-            [showTournamentInfo]="false"
-            [showPaginator]="false"
-          ></app-qualified-players>
+        
+        <button class="mobile-menu-button" (click)="toggleMobileMenu()">
+          <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+        </button>
+      </div>
+      
+      <!-- Barra de progreso para donaciones 
+      <div class="progress-bar-container">
+        <div class="progress-content">
+          <div class="progress-text">
+            <span>Meta de donación:</span>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+            </div>
+          </div>
+          <div class="progress-numbers">
+            <span class="current-amount">${{currentAmount}}</span>
+            <span>de</span>
+            <span class="goal-amount">${{goalAmount}}</span>
+          </div>
         </div>
-
-         <!-- Botón de Challonge que usa el campo challonge del activeTournament -->
-         <div *ngIf="activeTournament.currentPhase === 'Tournament' && activeTournament.challonge" class="challonge-section">
+      </div>-->
+    </nav>
+  
+    <!-- Hero section -->
+    <section class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-logo">
+          <img src="https://static.readdy.ai/image/6929ea911451f6a77b70511112d43f5f/0116ddf4c957ced8aa6ace99961f89b6.png" alt="Starcraft Chile Logo">
+        </div>
+        <h1 class="hero-title">Comunidad Starcraft Chile</h1>
+        <p class="hero-subtitle">La comunidad más grande de Starcraft en Chile. Únete a nuestros torneos, compite y forma parte de la historia.</p>
+        <div class="hero-buttons">
+          <button class="primary-button" [routerLink]="isAuthenticated ? ['/enroll'] : ['/auth']">
+            Unirse a la Liga
+          </button>
+          <button class="secondary-button" [routerLink]="['/active-tournament']">
+            Ver Torneos
+          </button>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Tournament section -->
+    <section class="tournament-section" id="liga">
+      <div class="section-container">
+        
+  
+        <!-- Loading state -->
+        <div *ngIf="isLoadingTournament" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Cargando torneo...</p>
+        </div>
+  
+        <!-- Active tournament -->
+        <div *ngIf="!isLoadingTournament && activeTournament" class="tournament-card">
+          <div class="tournament-grid">
+            <div class="tournament-info">
+              <h3 class="tournament-name">{{ activeTournament.name }}</h3>
+              <div class="tournament-phase">{{ activeTournament.currentPhase || 'Clasificación' }}</div>
+              
+              <div class="tournament-dates">
+                <div class="date-item">
+                  <span class="date-label">Clasificación:</span>
+                  <span class="date-value">{{ activeTournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.qualificationEndDate | date:'dd-MM-yyyy' }}</span>
+                </div>
+                
+                <div class="date-item">
+                  <span class="date-label">Torneo Principal:</span>
+                  <span class="date-value">{{ activeTournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ activeTournament.tournamentEndDate | date:'dd-MM-yyyy' }}</span>
+                </div>
+              </div>
+              
+              <div class="tournament-meta">
+                <div class="meta-item" *ngIf="activeTournament.prizePool">
+                  <span class="meta-label">Premio:</span>
+                  <span class="meta-value">{{ activeTournament.prizePool }} {{ activeTournament.currency || 'USD' }}</span>
+                </div>
+                
+                <div class="meta-item">
+                  <span class="meta-label">Jugadores inscritos:</span>
+                  <span class="meta-value highlight">{{ activeTournament.totalPlayers }}</span>
+                </div>
+              </div>
+              
+              <div class="tournament-actions">
+                <button class="view-button" [routerLink]="['/active-tournament']">
+                  <mat-icon>visibility</mat-icon>
+                  VER TORNEO
+                </button>
+                
+                <ng-container *ngIf="isAuthenticated">
+                  <button *ngIf="!isUserEnrolled && activeTournament.currentPhase === 'Qualification'" class="enroll-button" [routerLink]="['/enroll']">
+                    <mat-icon>how_to_reg</mat-icon>
+                    INSCRIBIRME
+                  </button>
+                  
+                  <div *ngIf="isUserEnrolled" class="enrolled-badge">
+                    <mat-icon>check_circle</mat-icon>
+                    Ya estás inscrito
+                  </div>
+                </ng-container>
+                
+                <button *ngIf="!isAuthenticated && activeTournament.currentPhase === 'Qualification'" class="enroll-button" [routerLink]="['/auth']">
+                  REGÍSTRATE PARA PARTICIPAR
+                </button>
+                
+                <!-- Mensaje si el torneo está en fase de torneo pero no está inscrito -->
+                <div *ngIf="activeTournament.currentPhase === 'Tournament' && !isUserEnrolled" class="tournament-closed">
+                  <mat-icon class="closed-icon">event_busy</mat-icon>
+                  Inscripciones cerradas
+                </div>
+              </div>
+            </div>
+            
+            <div class="race-stats">
+              <h3 class="stats-title">Distribución por Raza</h3>
+              <div class="race-chart">
+                <div #raceDistribution class="echarts-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Sección de jugadores clasificados -->
+          <div class="challonge-section">
+            <h2 class="section-title">Jugadores Clasificados</h2>
+            <app-qualified-players 
+              [displayLimit]="8" 
+              [showViewMoreButton]="true"
+              [showTournamentInfo]="false"
+              [showPaginator]="false"
+            ></app-qualified-players>
+          </div>
+          
+          <!-- Sección de brackets del torneo-->
+          <div *ngIf="activeTournament.currentPhase === 'Tournament' && activeTournament.challonge" class="challonge-section">
             <h2 class="section-title">Brackets del Torneo</h2>
             <div class="challonge-container">
               <iframe 
@@ -155,18 +188,268 @@
               </iframe>
             </div>
           </div>
+        </div>
+  
+        <!-- No active tournament -->
+        <div *ngIf="!isLoadingTournament && !activeTournament" class="no-tournament">
+          <div class="no-tournament-content">
+            <h3>Próximamente</h3>
+            <p>Nuevo Torneo</p>
+            <p class="no-tournament-message">No hay torneos activos en este momento. Vuelve pronto para más información.</p>
+          </div>
+        </div>
       </div>
-      
-      <!-- Mensaje si no hay torneo activo -->
-      <div *ngIf="!isLoadingTournament && !activeTournament" class="card">
-        <p class="coming-soon">PRÓXIMAMENTE</p>
-        <p class="tournament-date">Nuevo Torneo</p>
-        <p class="no-tournament-message">No hay torneos activos en este momento. Vuelve pronto para más información.</p>
+    </section>
+  
+    <!-- Ranking section 
+    <section class="ranking-section" id="ranking">
+      <div class="section-container">
+        <div class="section-header">
+          <h2 class="section-title">Ranking de Jugadores</h2>
+          <p class="section-subtitle">Clasificación basada en resultados de torneos y participación</p>
+        </div>
+        
+        <div class="ranking-grid">
+          <div class="ranking-table">
+            <div class="table-header">
+              <h3 class="table-title">Top Jugadores</h3>
+              <div class="table-actions">
+                <button class="action-button" [routerLink]="['/currentseason']">
+                  Ver Ranking Completo
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-content">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Raza</th>
+                    <th>MMR</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td class="player-cell">
+                      <div class="player-avatar"></div>
+                      RaynorX
+                    </td>
+                    <td><span class="race terran">Terran</span></td>
+                    <td>2450</td>
+                    <td><span class="status qualified">Clasificado</span></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td class="player-cell">
+                      <div class="player-avatar"></div>
+                      ZergMaster
+                    </td>
+                    <td><span class="race zerg">Zerg</span></td>
+                    <td>2350</td>
+                    <td><span class="status qualified">Clasificado</span></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td class="player-cell">
+                      <div class="player-avatar"></div>
+                      ProtossGG
+                    </td>
+                    <td><span class="race protoss">Protoss</span></td>
+                    <td>2300</td>
+                    <td><span class="status qualified">Clasificado</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="ranking-stats">
+            <div class="stats-card">
+              <h3 class="stats-title">Actividad Semanal</h3>
+              <div class="stats-chart">
+              
+                <div class="activity-chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <!-- Footer -->
-      <footer class="footer">
-        © 2025 Comunidad StarCraft CHILE
+    </section>
+  -->
+    <!-- Community section -->
+    <section class="community-section" id="comunidad">
+      <div class="section-container">
+        <div class="section-header">
+          <h2 class="section-title">Nuestra Comunidad</h2>
+          <p class="section-subtitle">Síguenos en nuestros canales y redes sociales</p>
+        </div>
+        
+        <div class="social-grid">
+          <a href="#" class="social-card discord">
+            <div class="social-icon">
+              <mat-icon>discord</mat-icon>
+            </div>
+            <h3 class="social-title">Discord</h3>
+            <p class="social-desc">Únete a nuestra comunidad para charlar y encontrar partidas</p>
+          </a>
+          
+          <a href="#" class="social-card youtube">
+            <div class="social-icon">
+              <mat-icon>smart_display</mat-icon>
+            </div>
+            <h3 class="social-title">YouTube</h3>
+            <p class="social-desc">Mira nuestros torneos y tutoriales</p>
+          </a>
+          
+          <a href="#" class="social-card twitter">
+            <div class="social-icon">
+              <mat-icon>chat</mat-icon>
+            </div>
+            <h3 class="social-title">Twitter</h3>
+            <p class="social-desc">Mantente informado de nuestras últimas novedades</p>
+          </a>
+          
+          <a href="#" class="social-card twitch">
+            <div class="social-icon">
+              <mat-icon>live_tv</mat-icon>
+            </div>
+            <h3 class="social-title">Twitch</h3>
+            <p class="social-desc">Sigue nuestras transmisiones en vivo</p>
+          </a>
+        </div>
+        
+        <!-- YouTube Channel -->
+        <div class="youtube-section">
+          <h3 class="youtube-title">Canal de YouTube</h3>
+          <div class="youtube-embed">
+            <div class="youtube-placeholder">
+              <mat-icon>play_circle_filled</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Donation section -->
+    <section class="donation-section" id="donar">
+      <div class="section-container">
+        <div class="section-header">
+          <h2 class="section-title">Apoya Nuestra Comunidad</h2>
+          <p class="section-subtitle">Tu donación nos ayuda a mantener y mejorar los torneos y eventos</p>
+        </div>
+        
+        <div class="donation-card">
+          <div class="donation-header">
+            <div class="donation-icon">
+              <mat-icon>favorite</mat-icon>
+            </div>
+            <h3 class="donation-title">Realiza una Donación</h3>
+            <p class="donation-subtitle">Elige la plataforma que prefieras para apoyar nuestro proyecto</p>
+          </div>
+          
+          <div class="donation-progress">
+            <div class="progress-text">
+              <span class="progress-label">Progreso de donaciones</span>
+              <div class="progress-amounts">
+                <span class="current-amount">${{currentAmount}}</span>
+                <span class="separator">de</span>
+                <span class="goal-amount">${{goalAmount}}</span>
+              </div>
+            </div>
+            
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="progressPercentage">
+                <span class="progress-percentage">{{progressPercentage}}%</span>
+              </div>
+            </div>
+            
+            <div class="progress-message">
+              Ayúdanos a alcanzar nuestra meta para mejorar los torneos y premios
+            </div>
+          </div>
+          
+          <div class="donation-options">
+            <a href="#" class="donation-option paypal">
+              <div class="option-icon">
+                <mat-icon>payment</mat-icon>
+              </div>
+              <div class="option-text">
+                <h4 class="option-title">PayPal</h4>
+                <p class="option-desc">Donación única o recurrente</p>
+              </div>
+            </a>
+            
+            <a href="#" class="donation-option patreon">
+              <div class="option-icon">
+                <mat-icon>loyalty</mat-icon>
+              </div>
+              <div class="option-text">
+                <h4 class="option-title">Patreon</h4>
+                <p class="option-desc">Suscripción mensual</p>
+              </div>
+            </a>
+            
+            <a href="#" class="donation-option twitch">
+              <div class="option-icon">
+                <mat-icon>live_tv</mat-icon>
+              </div>
+              <div class="option-text">
+                <h4 class="option-title">Twitch</h4>
+                <p class="option-desc">Suscripción al canal</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+          <div class="footer-main">
+            <div class="footer-logo-column">
+              <div class="footer-logo">
+                <img src="https://static.readdy.ai/image/6929ea911451f6a77b70511112d43f5f/0116ddf4c957ced8aa6ace99961f89b6.png" alt="Starcraft Chile Logo" class="footer-logo-img">
+                <span class="footer-logo-text">SC-CHL</span>
+              </div>
+            </div>
+            
+            <div class="footer-links-column">
+              <h4 class="footer-title">Enlaces</h4>
+              <ul>
+                <li><a [routerLink]="['/']">Inicio</a></li>
+                <li><a [routerLink]="['/currentseason']">Ranking</a></li>
+                <li><a href="#comunidad">Comunidad</a></li>
+                <li><a href="#donar">Donar</a></li>
+              </ul>
+            </div>
+            
+            <div class="footer-links-column">
+              <h4 class="footer-title">Recursos</h4>
+              <ul>
+                <li><a href="#">Guías</a></li>
+                <li><a href="#">Reglas</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Contacto</a></li>
+              </ul>
+            </div>
+            
+            <div class="footer-links-column">
+              <h4 class="footer-title">Legal</h4>
+              <ul>
+                <li><a href="#">Términos</a></li>
+                <li><a href="#">Privacidad</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="footer-bottom">
+            <p>&copy; 2025 Comunidad Starcraft Chile. Todos los derechos reservados.</p>
+          </div>
+        </div>
       </footer>
-    </div>
   </div>
