@@ -1,6 +1,6 @@
 export default  {
     production: false,
-    apiUrl: 'https://starcraftchile.com/api'
+    apiUrl: 'http://localhost:5203/api'
   };
   
    

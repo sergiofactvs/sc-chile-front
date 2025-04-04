@@ -1,8 +1,7 @@
 export interface PlayerProfileDto {
     id: number;
     firstName: string;
-    lastName: string;
-    birthDate: string;
+    lastName: string;     
     country: string;
     aliases?: string;
     description?: string;
@@ -56,8 +55,7 @@ export interface PlayerProfileDto {
   export interface UpdatePlayerProfileRequest {
     playerId: number;
     firstName: string;
-    lastName: string;
-    birthDate: string;
+    lastName: string;    
     country: string;
     description?: string;
     aliases: string;

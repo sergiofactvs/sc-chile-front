@@ -111,19 +111,6 @@ import { PlayerProfileDto, GameProfileDto, UpdatePlayerProfileRequest, Tournamen
 
                     <div class="form-row">
                       <mat-form-field appearance="outline">
-                        <mat-label>Fecha de Nacimiento</mat-label>
-                        <input matInput [matDatepicker]="birthDatePicker" 
-                          formControlName="birthDate" 
-                          placeholder="dd-MM-yyyy" 
-                          required>
-                        <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
-                        <mat-datepicker #birthDatePicker></mat-datepicker>
-                        <mat-error *ngIf="profileForm.get('birthDate')?.invalid">
-                          Fecha de nacimiento es requerida
-                        </mat-error>
-                      </mat-form-field>
-
-                      <mat-form-field appearance="outline">
                         <mat-label>País</mat-label>
                         <input matInput formControlName="country" required>
                         <mat-error *ngIf="profileForm.get('country')?.invalid">
@@ -880,8 +867,7 @@ export class PlayerProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       playerId: [0],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      birthDate: ['', Validators.required],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],      
       country: ['', [Validators.required, Validators.minLength(2)]],
       aliases: [''], // Campo para Aliases/Nickname
       description: ['']
@@ -909,8 +895,7 @@ export class PlayerProfileComponent implements OnInit {
         this.profileForm.patchValue({
           playerId: profile.id,
           firstName: profile.firstName,
-          lastName: profile.lastName,
-          birthDate: new Date(profile.birthDate),
+          lastName: profile.lastName,         
           country: profile.country,
           aliases: profile.aliases,
           description: profile.description
@@ -952,8 +937,7 @@ export class PlayerProfileComponent implements OnInit {
     if (this.profileForm.valid) {
       const formValue = this.profileForm.value;
       const updateRequest: UpdatePlayerProfileRequest = {
-        ...formValue,
-        birthDate: formValue.birthDate.toISOString()
+        ...formValue        
       };
 
       this.playerService.updatePlayerProfile(updateRequest).subscribe({
@@ -962,8 +946,7 @@ export class PlayerProfileComponent implements OnInit {
             // Actualizar perfil local
             if (this.profile) {
               this.profile.firstName = updateRequest.firstName;
-              this.profile.lastName = updateRequest.lastName;
-              this.profile.birthDate = updateRequest.birthDate;
+              this.profile.lastName = updateRequest.lastName;              
               this.profile.country = updateRequest.country;
               this.profile.aliases = updateRequest.aliases;
               this.profile.description = updateRequest.description;

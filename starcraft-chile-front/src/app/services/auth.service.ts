@@ -10,8 +10,7 @@ import { Router } from '@angular/router';
 // Definimos las interfaces necesarias basadas en el Swagger
 export interface UserRegistrationRequest {
   firstName: string;
-  lastName: string;
-  birthDate: string; // Fecha en formato ISO string
+  lastName: string; 
   country: string;
   description?: string;
   email: string;

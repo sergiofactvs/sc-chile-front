@@ -179,15 +179,7 @@ import { AuthService, UserRegistrationRequest } from '../services/auth.service';
             </select>
           </div>
           
-          <div class="form-group">
-            <label for="register-birthDate">Fecha de Nacimiento</label>
-            <input 
-              id="register-birthDate"
-              type="date" 
-              formControlName="birthDate" 
-              required
-            >
-          </div>
+         
           
           <div class="form-group">
             <label for="register-description">Descripción (opcional)</label>
@@ -507,8 +499,7 @@ export class AuthComponent {
         Validators.maxLength(100)
       ]],
       email: ['', [Validators.required, Validators.email]],
-      alias: ['', [Validators.required]],
-      birthDate: ['', [Validators.required]],
+      alias: ['', [Validators.required]],      
       country: ['Chile', [Validators.required]], // Valor por defecto "Chile"
       description: [''],
       gateway: [null, [Validators.required]],
@@ -577,19 +568,11 @@ export class AuthComponent {
       // Preparar datos para el registro según la estructura requerida por la API
       const formValues = this.registrationForm.value;
       
-      // Convertir fecha al formato ISO string
-      let birthDate: string;
-      if (formValues.birthDate instanceof Date) {
-        birthDate = formValues.birthDate.toISOString();
-      } else {
-        // Si es un string, asegurarnos de que sea un formato ISO
-        birthDate = new Date(formValues.birthDate).toISOString();
-      }
+       
       
       const registrationData: UserRegistrationRequest = {
         firstName: formValues.firstName,
-        lastName: formValues.lastName,
-        birthDate: birthDate,
+        lastName: formValues.lastName,        
         country: formValues.country,
         description: formValues.description || undefined,
         email: formValues.email,

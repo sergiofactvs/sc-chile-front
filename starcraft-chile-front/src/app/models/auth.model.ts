@@ -24,8 +24,7 @@ export interface UserDto {
 
 export interface UserRegistrationRequest {
   firstName: string;
-  lastName: string;
-  birthDate: string; // Fecha en formato ISO string
+  lastName: string;  
   country: string;
   description?: string;
   email: string;
