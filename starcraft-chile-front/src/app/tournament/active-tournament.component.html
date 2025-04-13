@@ -1,354 +1,354 @@
 <div class="tournament-container">
-    <div class="header">
-      <img 
-        src="/assets/logo.png" 
-        alt="Comunidad Starcraft CHILE Logo" 
-        class="header-logo"
-      />
-      <h1>Torneo Activo</h1>
-    </div>
-  
-    <div class="back-link">
-      <a [routerLink]="['/']" class="back-button">
-        <mat-icon>arrow_back</mat-icon>
-        Volver al Inicio
-      </a>
-    </div>
-  
-    <!-- Estado de carga y error -->
-    <div *ngIf="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Cargando información del torneo...</p>
-    </div>
-  
-    <div *ngIf="error" class="error-container">
-      <mat-icon class="error-icon">error</mat-icon>
-      <p>{{ error }}</p>
-      <button mat-raised-button color="primary" (click)="loadActiveTournament()">Reintentar</button>
-    </div>
-  
-    <!-- Si no hay torneo activo -->
-    <div *ngIf="!isLoading && !error && !tournament" class="no-tournament">
-      <mat-card class="info-card">
-        <mat-card-content>
-          <mat-icon class="info-icon">event_busy</mat-icon>
-          <h2>No hay torneos activos</h2>
-          <p>Actualmente no hay torneos en fase de clasificación. Vuelve pronto para más información.</p>
-          <button mat-raised-button color="primary" [routerLink]="['/']">Volver al Inicio</button>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  
-    <!-- Información del torneo activo -->
-    <div *ngIf="!isLoading && !error && tournament" class="tournament-content">
-      <mat-card class="tournament-card">
-        <mat-card-header>
-          <mat-card-title>{{ tournament.name }}</mat-card-title>
-          <mat-card-subtitle>
-            <div class="tournament-phase" [ngClass]="{'phase-qualification': tournament.currentPhase === 'Qualification', 'phase-tournament': tournament.currentPhase === 'Tournament', 'phase-upcoming': tournament.currentPhase === 'Upcoming', 'phase-completed': tournament.currentPhase === 'Completed'}">
-              {{ tournament.currentPhase || 'Fase de Clasificación' }}
+  <div class="header">
+    <img 
+      src="/assets/logo.png" 
+      alt="Comunidad Starcraft CHILE Logo" 
+      class="header-logo"
+    />
+    <h1>Torneo Activo</h1>
+  </div>
+
+  <div class="back-link">
+    <a [routerLink]="['/']" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al Inicio
+    </a>
+  </div>
+
+  <!-- Estado de carga y error -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando información del torneo...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadActiveTournament()">Reintentar</button>
+  </div>
+
+  <!-- Si no hay torneo activo -->
+  <div *ngIf="!isLoading && !error && !tournament" class="no-tournament">
+    <mat-card class="info-card">
+      <mat-card-content>
+        <mat-icon class="info-icon">event_busy</mat-icon>
+        <h2>No hay torneos activos</h2>
+        <p>Actualmente no hay torneos en fase de clasificación. Vuelve pronto para más información.</p>
+        <button mat-raised-button color="primary" [routerLink]="['/']">Volver al Inicio</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Información del torneo activo -->
+  <div *ngIf="!isLoading && !error && tournament" class="tournament-content">
+    <mat-card class="tournament-card">
+      <mat-card-header>
+        <mat-card-title>{{ tournament.name }}</mat-card-title>
+        <mat-card-subtitle>
+          <div class="tournament-phase" [ngClass]="{'phase-qualification': tournament.currentPhase === 'Qualification', 'phase-tournament': tournament.currentPhase === 'Tournament', 'phase-upcoming': tournament.currentPhase === 'Upcoming', 'phase-completed': tournament.currentPhase === 'Completed'}">
+            {{ tournament.currentPhase || 'Fase de Clasificación' }}
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="tournament-info">
+          <div class="tournament-details">
+            <h3>Detalles del Torneo</h3>
+            
+            <div class="tournament-dates">
+              <div class="date-section">
+                <h4>Clasificación:</h4>
+                <p>{{ tournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ tournament.qualificationEndDate | date:'dd-MM-yyyy' }}</p>
+              </div>
+              <div class="date-section">
+                <h4>Torneo Principal:</h4>
+                <p>{{ tournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ tournament.tournamentEndDate | date:'dd-MM-yyyy' }}</p>
+              </div>
             </div>
-          </mat-card-subtitle>
-        </mat-card-header>
-        
-        <mat-card-content>
-          <div class="tournament-info">
-            <div class="tournament-details">
-              <h3>Detalles del Torneo</h3>
-              
-              <div class="tournament-dates">
-                <div class="date-section">
-                  <h4>Clasificación:</h4>
-                  <p>{{ tournament.qualificationStartDate | date:'dd-MM-yyyy' }} al {{ tournament.qualificationEndDate | date:'dd-MM-yyyy' }}</p>
-                </div>
-                <div class="date-section">
-                  <h4>Torneo Principal:</h4>
-                  <p>{{ tournament.tournamentStartDate | date:'dd-MM-yyyy' }} al {{ tournament.tournamentEndDate | date:'dd-MM-yyyy' }}</p>
-                </div>
+            
+            <div class="tournament-meta">
+              <div class="meta-item" *ngIf="tournament.prizePool">
+                <span class="meta-label">Premio:</span>
+                <span class="meta-value">{{ tournament.prizePool }} {{ tournament.currency || 'USD' }}</span>
               </div>
-              
-              <div class="tournament-meta">
-                <div class="meta-item" *ngIf="tournament.prizePool">
-                  <span class="meta-label">Premio:</span>
-                  <span class="meta-value">{{ tournament.prizePool }} {{ tournament.currency || 'USD' }}</span>
-                </div>
-                <div class="meta-item" *ngIf="tournament.location">
-                  <span class="meta-label">Ubicación:</span>
-                  <span class="meta-value">{{ tournament.location }}</span>
-                </div>
-                <div class="meta-item" *ngIf="tournament.format">
-                  <span class="meta-label">Formato:</span>
-                  <span class="meta-value">{{ tournament.format }}</span>
-                </div>
-                <div class="meta-item" *ngIf="tournament.organizedBy">
-                  <span class="meta-label">Organizado por:</span>
-                  <span class="meta-value">{{ tournament.organizedBy }}</span>
-                </div>
-                <div class="meta-item" *ngIf="tournament.streamingPlatform">
-                  <span class="meta-label">Plataforma de Streaming:</span>
-                  <span class="meta-value">{{ tournament.streamingPlatform }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="meta-label">Jugadores Registrados:</span>
-                  <span class="meta-value highlight-value">{{ tournament.totalPlayers }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="meta-label">Mínimo de partidas:</span>
-                  <span class="meta-value highlight-value">{{ tournament.minimumGames }}</span>
-                </div>
+              <div class="meta-item" *ngIf="tournament.location">
+                <span class="meta-label">Ubicación:</span>
+                <span class="meta-value">{{ tournament.location }}</span>
               </div>
-              
-              <!-- Mostrar mensaje especial si el torneo está en fase de torneo -->
-              <div *ngIf="tournament.currentPhase === 'Tournament'" class="tournament-phase-message">
-                <p><mat-icon>info</mat-icon> El torneo ha comenzado y las inscripciones están cerradas.</p>
+              <div class="meta-item" *ngIf="tournament.format">
+                <span class="meta-label">Formato:</span>
+                <span class="meta-value">{{ tournament.format }}</span>
               </div>
-             
-              <div class="tournament-description" *ngIf="tournament.description">
-                <h4>Descripción</h4>
-                <p>{{ tournament.description }}</p>
+              <div class="meta-item" *ngIf="tournament.organizedBy">
+                <span class="meta-label">Organizado por:</span>
+                <span class="meta-value">{{ tournament.organizedBy }}</span>
               </div>
-              <div class="tournament-description" *ngIf="tournament.rules">
-                <h4>Reglas</h4>
-                <p>{{ tournament.rules }}</p>
+              <div class="meta-item" *ngIf="tournament.streamingPlatform">
+                <span class="meta-label">Plataforma de Streaming:</span>
+                <span class="meta-value">{{ tournament.streamingPlatform }}</span>
               </div>
-              <div class="tournament-description" *ngIf="tournament.rules">
-                <h4>Clasificación Ranked</h4>
-                <p>Para clasificar al torneo, los jugadores deben cumplir con un mínimo de {{ tournament.minimumGames }} partidas. 
-                    Los 8 mejores jugadores clasificados participarán en el torneo principal.</p>
+              <div class="meta-item">
+                <span class="meta-label">Jugadores Registrados:</span>
+                <span class="meta-value highlight-value">{{ tournament.totalPlayers }}</span>
               </div>
-  
-              <!-- Botón de inscripción si el usuario está autenticado y no está inscrito (solo en fase de clasificación) -->
-              <div class="enrollment-actions" *ngIf="isAuthenticated && tournament.currentPhase === 'Qualification'">
-                <div *ngIf="!isUserEnrolled">
-                  <button 
-                    mat-raised-button 
-                    color="primary" 
-                    class="enroll-button"
-                    [routerLink]="['/enroll']"
-                  >
-                    <mat-icon>how_to_reg</mat-icon>
-                    Inscribirme al Torneo
-                  </button>
-                </div>
-                <div *ngIf="isUserEnrolled" class="already-enrolled">
-                  <div class="enrolled-badge">
-                    <mat-icon>check_circle</mat-icon>
-                    Ya estás inscrito en este torneo
-                  </div>
-                  <button 
-                    mat-raised-button 
-                    class="profile-button"
-                    [routerLink]="['/profile']"
-                  >
-                    Ver mi Perfil
-                  </button>
-                </div>
+              <div class="meta-item">
+                <span class="meta-label">Mínimo de partidas:</span>
+                <span class="meta-value highlight-value">{{ tournament.minimumGames }}</span>
               </div>
-              
-              <!-- Mensaje para torneos en fase principal -->
-              <div class="enrollment-actions" *ngIf="isAuthenticated && tournament.currentPhase === 'Tournament'">
-                <div *ngIf="isUserEnrolled" class="already-enrolled">
-                  <div class="enrolled-badge">
-                    <mat-icon>check_circle</mat-icon>
-                    Participando en este torneo
-                  </div>
-                  <button 
-                    mat-raised-button 
-                    class="profile-button"
-                    [routerLink]="['/profile']"
-                  >
-                    Ver mi Perfil
-                  </button>
-                </div>
-                <div *ngIf="!isUserEnrolled" class="tournament-closed">
-                  <mat-icon class="closed-icon">event_busy</mat-icon>
-                  El período de inscripción ha finalizado
-                </div>
-              </div>
-              
-              <!-- Mensaje para usuarios no autenticados -->
-              <div class="enrollment-actions" *ngIf="!isAuthenticated && tournament.currentPhase === 'Qualification'">
+            </div>
+            
+            <!-- Mostrar mensaje especial si el torneo está en fase de torneo -->
+            <div *ngIf="tournament.currentPhase === 'Tournament'" class="tournament-phase-message">
+              <p><mat-icon>info</mat-icon> El torneo ha comenzado y las inscripciones están cerradas.</p>
+            </div>
+           
+            <div class="tournament-description" *ngIf="tournament.description">
+              <h4>Descripción</h4>
+              <p>{{ tournament.description }}</p>
+            </div>
+            <div class="tournament-description" *ngIf="tournament.rules">
+              <h4>Reglas</h4>
+              <p>{{ tournament.rules }}</p>
+            </div>
+            <div class="tournament-description" *ngIf="tournament.rules">
+              <h4>Clasificación Ranked</h4>
+              <p>Para clasificar al torneo, los jugadores deben cumplir con un mínimo de {{ tournament.minimumGames }} partidas. 
+                  Los 8 mejores jugadores clasificados participarán en el torneo principal.</p>
+            </div>
+
+            <!-- Botón de inscripción si el usuario está autenticado y no está inscrito (solo en fase de clasificación) -->
+            <div class="enrollment-actions" *ngIf="isAuthenticated && tournament.currentPhase === 'Qualification'">
+              <div *ngIf="!isUserEnrolled">
                 <button 
                   mat-raised-button 
                   color="primary" 
-                  class="login-button"
-                  [routerLink]="['/auth']"
+                  class="enroll-button"
+                  [routerLink]="['/enroll']"
                 >
-                  <mat-icon>login</mat-icon>
-                  Inicia Sesión para Inscribirte
+                  <mat-icon>how_to_reg</mat-icon>
+                  Inscribirme al Torneo
                 </button>
               </div>
-              
-              <!-- Mensaje para usuarios no autenticados en fase de torneo -->
-              <div class="enrollment-actions" *ngIf="!isAuthenticated && tournament.currentPhase === 'Tournament'">
-                <div class="tournament-closed">
-                  <mat-icon class="closed-icon">event_busy</mat-icon>
-                  El período de inscripción ha finalizado
+              <div *ngIf="isUserEnrolled" class="already-enrolled">
+                <div class="enrolled-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  Ya estás inscrito en este torneo
                 </div>
                 <button 
                   mat-raised-button 
-                  class="login-button"
-                  [routerLink]="['/auth']"
+                  class="profile-button"
+                  [routerLink]="['/profile']"
                 >
-                  <mat-icon>login</mat-icon>
-                  Inicia Sesión para ver tu perfil
+                  Ver mi Perfil
                 </button>
               </div>
             </div>
-          </div>
-  
-          <!-- Lista de jugadores inscritos -->
-          <div class="players-section">
-            <h3>Jugadores Inscritos <span class="player-count">({{ tournament.totalPlayers }})</span></h3>
             
-            <div class="filter-sort">
-              <input 
-                type="text" 
-                placeholder="Buscar jugador..." 
-                class="search-input"
-                (input)="applyFilter($event)"
-              >
-            </div>
-  
-            <!-- Tabla de jugadores -->
-            <div class="table-responsive">
-              <table 
-                mat-table 
-                [dataSource]="displayedPlayers" 
-                matSort 
-                (matSortChange)="sortData($event)"
-                class="players-table"
-              >
-                <!-- Posición Column -->
-                <ng-container matColumnDef="position">
-                  <th mat-header-cell *matHeaderCellDef>Pos</th>
-                  <td mat-cell *matCellDef="let player">{{ player.rankingPosition || 'N/A' }}</td>
-                </ng-container>
-  
-                <!-- Alias Column -->
-                <ng-container matColumnDef="alias">
-                  <th mat-header-cell *matHeaderCellDef>Alias</th>
-                  <td mat-cell *matCellDef="let player">
-                      <a [routerLink]="['/player', player.playerId]" class="player-link" *ngIf="player.playerId">
-                      {{ player.alias || 'N/A' }}
-                      </a>
-                      <span *ngIf="!player.playerId">{{ player.alias || 'N/A' }}</span>
-                  </td>
-                </ng-container>
-  
-                <!-- Race Column -->
-                <ng-container matColumnDef="race">
-                  <th mat-header-cell *matHeaderCellDef >Raza</th>
-                  <td mat-cell *matCellDef="let player">
-                    <div class="race-cell">
-                      <img 
-                        *ngIf="player.race" 
-                        [src]="getRaceIcon(player.race)" 
-                        [alt]="player.race" 
-                        class="race-icon"
-                      >
-                      {{ player.race || 'N/A' }}
-                    </div>
-                  </td>
-                </ng-container>
-  
-                <!-- Gateway Column -->
-                <ng-container matColumnDef="gateway">
-                  <th mat-header-cell *matHeaderCellDef>Gateway</th>
-                  <td mat-cell *matCellDef="let player">{{ player.gatewayName || getGatewayName(player.gateway) }}</td>
-                </ng-container>
-  
-                <!-- Rank Column -->
-                <ng-container matColumnDef="rank">
-                  <th mat-header-cell *matHeaderCellDef>Rango</th>
-                  <td mat-cell *matCellDef="let player">{{ player.rank || 'N/A' }}</td>
-                </ng-container>
-  
-                <!-- Rating Column -->
-                <ng-container matColumnDef="rating">
-                  <th mat-header-cell *matHeaderCellDef>MMR</th>
-                  <td mat-cell *matCellDef="let player">{{ player.rating || 'N/A' }}</td>
-                </ng-container>
-  
-                <!-- Win/Loss Column -->
-                <ng-container matColumnDef="record">
-                  <th mat-header-cell *matHeaderCellDef>Victoria/Derrota</th>
-                  <td mat-cell *matCellDef="let player">
-                    <span class="win">{{ player.wins }}</span> - <span class="loss">{{ player.losses }}</span>
-                  </td>
-                </ng-container>
-  
-                <!-- Win Rate Column -->
-                <ng-container matColumnDef="winRate">
-                  <th mat-header-cell *matHeaderCellDef>% Victoria</th>
-                  <td mat-cell *matCellDef="let player">{{ player.winRate.toFixed(1) }}%</td>
-                </ng-container>
-  
-                <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
-                  <td mat-cell *matCellDef="let player">
-                    <div class="qualification-status" 
-                        [class.qualified]="player.isQualified"
-                        [class.top-qualified]="player.qualificationPosition && player.qualificationPosition <= 8"
-                        [matTooltip]="getPlayerStatusTooltip(player)">
-                      <span *ngIf="player.isQualified && player.qualificationPosition && player.qualificationPosition <= 8" class="status-text">
-                        Clasificado <span class="qualification-position">#{{ player.qualificationPosition }}</span>
-                      </span>
-                      <span *ngIf="player.isQualified && (!player.qualificationPosition || player.qualificationPosition > 8)" class="status-text">
-                        Clasificado
-                      </span>
-                      <span *ngIf="!player.isQualified" class="status-text">
-                        {{ player.totalGames }}/{{ minimumGames }} partidas
-                      </span>
-                    </div>
-                  </td>
-                </ng-container>
-  
-                <ng-container matColumnDef="rankingposition">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Pos</th>
-                  <td mat-cell *matCellDef="let player" [ngClass]="getPositionClass(player)" class="position-cell">
-                    {{ player.rankingPosition }}
-                  </td>
-                </ng-container>
-                  
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-              </table>
-              
-              <!-- Mensaje si no hay jugadores o no hay resultados de búsqueda -->
-              <div *ngIf="displayedPlayers.length === 0" class="no-players">
-                <p *ngIf="allPlayers.length === 0">No hay jugadores inscritos en el torneo todavía.</p>
-                <p *ngIf="allPlayers.length > 0">No se encontraron jugadores con ese criterio de búsqueda.</p>
+            <!-- Mensaje para torneos en fase principal -->
+            <div class="enrollment-actions" *ngIf="isAuthenticated && tournament.currentPhase === 'Tournament'">
+              <div *ngIf="isUserEnrolled" class="already-enrolled">
+                <div class="enrolled-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  Participando en este torneo
+                </div>
+                <button 
+                  mat-raised-button 
+                  class="profile-button"
+                  [routerLink]="['/profile']"
+                >
+                  Ver mi Perfil
+                </button>
+              </div>
+              <div *ngIf="!isUserEnrolled" class="tournament-closed">
+                <mat-icon class="closed-icon">event_busy</mat-icon>
+                El período de inscripción ha finalizado
               </div>
             </div>
             
-            <!-- Paginador -->
-            <mat-paginator
-              *ngIf="allPlayers.length > 0"
-              [length]="filteredPlayers.length"
-              [pageSize]="pageSize"
-              [pageSizeOptions]="[10, 25, 50]"
-              (page)="onPageChange($event)"
-              showFirstLastButtons
-            ></mat-paginator>
+            <!-- Mensaje para usuarios no autenticados -->
+            <div class="enrollment-actions" *ngIf="!isAuthenticated && tournament.currentPhase === 'Qualification'">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                class="login-button"
+                [routerLink]="['/auth']"
+              >
+                <mat-icon>login</mat-icon>
+                Inicia Sesión para Inscribirte
+              </button>
+            </div>
+            
+            <!-- Mensaje para usuarios no autenticados en fase de torneo -->
+            <div class="enrollment-actions" *ngIf="!isAuthenticated && tournament.currentPhase === 'Tournament'">
+              <div class="tournament-closed">
+                <mat-icon class="closed-icon">event_busy</mat-icon>
+                El período de inscripción ha finalizado
+              </div>
+              <button 
+                mat-raised-button 
+                class="login-button"
+                [routerLink]="['/auth']"
+              >
+                <mat-icon>login</mat-icon>
+                Inicia Sesión para ver tu perfil
+              </button>
+            </div>
           </div>
-           <!-- Botón de Challonge que usa el campo challonge del activeTournament -->
-      <div *ngIf="tournament.currentPhase === 'Tournament' && tournament.challonge" class="challonge-section">
-        <h2 class="section-title">Brackets del Torneo</h2>
-        <div class="challonge-container">
-          <iframe 
-            [src]="getSafeChallongeUrl(tournament.challonge)" 
-            width="100%" 
-            height="500" 
-            frameborder="0" 
-            scrolling="auto" 
-            allowtransparency="true">
-          </iframe>
         </div>
-      </div>
-        </mat-card-content>
 
-      </mat-card>
-     
+        <!-- Lista de jugadores inscritos -->
+        <div class="players-section">
+          <h3>Jugadores Inscritos <span class="player-count">({{ tournament.totalPlayers }})</span></h3>
+          
+          <div class="filter-sort">
+            <input 
+              type="text" 
+              placeholder="Buscar jugador..." 
+              class="search-input"
+              (input)="applyFilter($event)"
+            >
+          </div>
+
+          <!-- Tabla de jugadores -->
+          <div class="table-responsive">
+            <table 
+              mat-table 
+              [dataSource]="displayedPlayers" 
+              matSort 
+              (matSortChange)="sortData($event)"
+              class="players-table"
+            >
+              <!-- Posición Column -->
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef>Pos</th>
+                <td mat-cell *matCellDef="let player">{{ player.rankingPosition || 'N/A' }}</td>
+              </ng-container>
+
+              <!-- Alias Column -->
+              <ng-container matColumnDef="alias">
+                <th mat-header-cell *matHeaderCellDef>Alias</th>
+                <td mat-cell *matCellDef="let player">
+                    <a [routerLink]="['/player', player.playerId]" class="player-link" *ngIf="player.playerId">
+                    {{ player.alias || 'N/A' }}
+                    </a>
+                    <span *ngIf="!player.playerId">{{ player.alias || 'N/A' }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Race Column -->
+              <ng-container matColumnDef="race">
+                <th mat-header-cell *matHeaderCellDef>Raza</th>
+                <td mat-cell *matCellDef="let player">
+                  <div class="race-cell">
+                    <img 
+                      *ngIf="player.race" 
+                      [src]="getRaceIcon(player.race)" 
+                      [alt]="player.race" 
+                      class="race-icon"
+                    >
+                    {{ formatRaceName(player.race) || 'N/A' }}
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Gateway Column -->
+              <ng-container matColumnDef="gateway">
+                <th mat-header-cell *matHeaderCellDef>Gateway</th>
+                <td mat-cell *matCellDef="let player">{{ player.gatewayName || getGatewayName(player.gateway) }}</td>
+              </ng-container>
+
+              <!-- Rank Column -->
+              <ng-container matColumnDef="rank">
+                <th mat-header-cell *matHeaderCellDef>Rango</th>
+                <td mat-cell *matCellDef="let player">{{ player.rank || 'N/A' }}</td>
+              </ng-container>
+
+              <!-- Rating Column -->
+              <ng-container matColumnDef="rating">
+                <th mat-header-cell *matHeaderCellDef>MMR</th>
+                <td mat-cell *matCellDef="let player">{{ player.rating || 'N/A' }}</td>
+              </ng-container>
+
+              <!-- Win/Loss Column -->
+              <ng-container matColumnDef="record">
+                <th mat-header-cell *matHeaderCellDef>Victoria/Derrota</th>
+                <td mat-cell *matCellDef="let player">
+                  <span class="win">{{ player.wins }}</span> - <span class="loss">{{ player.losses }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Win Rate Column -->
+              <ng-container matColumnDef="winRate">
+                <th mat-header-cell *matHeaderCellDef>% Victoria</th>
+                <td mat-cell *matCellDef="let player">{{ player.winRate.toFixed(1) }}%</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+                <td mat-cell *matCellDef="let player">
+                  <div class="qualification-status" 
+                      [class.qualified]="player.isQualified"
+                      [class.top-qualified]="player.qualificationPosition && player.qualificationPosition <= 8"
+                      [matTooltip]="getPlayerStatusTooltip(player)">
+                    <span *ngIf="player.isQualified && player.qualificationPosition && player.qualificationPosition <= 8" class="status-text">
+                      Clasificado <span class="qualification-position">#{{ player.qualificationPosition }}</span>
+                    </span>
+                    <span *ngIf="player.isQualified && (!player.qualificationPosition || player.qualificationPosition > 8)" class="status-text">
+                      Clasificado
+                    </span>
+                    <span *ngIf="!player.isQualified" class="status-text">
+                      {{ player.totalGames }}/{{ minimumGames }} partidas
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="rankingposition">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pos</th>
+                <td mat-cell *matCellDef="let player" [ngClass]="getPositionClass(player)" class="position-cell">
+                  {{ player.rankingPosition }}
+                </td>
+              </ng-container>
+                
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            
+            <!-- Mensaje si no hay jugadores o no hay resultados de búsqueda -->
+            <div *ngIf="displayedPlayers.length === 0" class="no-players">
+              <p *ngIf="allPlayers.length === 0">No hay jugadores inscritos en el torneo todavía.</p>
+              <p *ngIf="allPlayers.length > 0">No se encontraron jugadores con ese criterio de búsqueda.</p>
+            </div>
+          </div>
+          
+          <!-- Paginador -->
+          <mat-paginator
+            *ngIf="allPlayers.length > 0"
+            [length]="filteredPlayers.length"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[10, 25, 50]"
+            (page)="onPageChange($event)"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+         <!-- Botón de Challonge que usa el campo challonge del activeTournament -->
+    <div *ngIf="tournament.currentPhase === 'Tournament' && tournament.challonge" class="challonge-section">
+      <h2 class="section-title">Brackets del Torneo</h2>
+      <div class="challonge-container">
+        <iframe 
+          [src]="getSafeChallongeUrl(tournament.challonge)" 
+          width="100%" 
+          height="500" 
+          frameborder="0" 
+          scrolling="auto" 
+          allowtransparency="true">
+        </iframe>
+      </div>
     </div>
+      </mat-card-content>
+
+    </mat-card>
+   
   </div>
+</div>

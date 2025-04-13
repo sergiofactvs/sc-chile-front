@@ -132,54 +132,116 @@ export class LandingComponent implements OnInit, AfterViewInit {
   
   initRaceDistributionChart() {
     if (this.raceDistributionElement && this.raceDistributionElement.nativeElement) {
-      try {
-        // Verificar el tamaño del contenedor
-        const element = this.raceDistributionElement.nativeElement;
-        const width = element.clientWidth;
-        const height = element.clientHeight;
-        
-        console.log(`Tamaño del contenedor de razas: ${width}x${height}`);
-        
-        // Si el contenedor no tiene tamaño, forzar dimensiones
-        if (width === 0 || height === 0) {
-          element.style.width = '100%';
-          element.style.height = '300px';
-          console.log('Ajustando tamaño del contenedor de razas');
-        }
-        
-        // Inicializar el gráfico
-        this.raceChart = echarts.init(element);
-        
-        const option = {
-          animation: false,
-          tooltip: {
-            trigger: 'item',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            textStyle: { color: '#1f2937' }
-          },
-          series: [{
-            type: 'pie',
-            radius: ['40%', '70%'],
+      const element = this.raceDistributionElement.nativeElement;
+      
+      // Ensure chart container has dimensions
+      element.style.width = '100%';
+      element.style.height = '300px';
+      
+      this.raceChart = echarts.init(element);
+      
+      // Race color mapping
+      const raceColorMap: { [key: string]: string } = {
+        'Terran': 'rgba(87, 181, 231, 1)',
+        'Protoss': 'rgba(141, 211, 199, 1)', 
+        'Zerg': 'rgba(251, 191, 114, 1)',
+        'Random': 'rgba(170, 170, 170, 1)'
+      };
+  
+      this.activeTournamentService.getRaceDistribution().subscribe({
+        next: (distributions) => {
+          const chartData = distributions.map(dist => ({
+            value: dist.count,
+            name: dist.race || 'Desconocida',
             itemStyle: {
-              borderRadius: 8
+              color: raceColorMap[dist.race || 'Random'] || 'rgba(200, 200, 200, 1)'
+            }
+          }));
+  
+          const option = {
+            animation: false,
+            tooltip: {
+              trigger: 'item',
+              formatter: '{b}: {c} ({d}%)',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              textStyle: { color: '#1f2937' }
             },
-            label: {
-              show: true,
-              color: '#fff'
+            series: [{
+              type: 'pie',
+              radius: ['40%', '70%'],
+              itemStyle: { borderRadius: 8 },
+              label: {
+                show: true,
+                color: '#fff',
+                formatter: '{b}\n{d}%'
+              },
+              data: chartData.length > 0 ? chartData : [
+                { 
+                  value: 40, 
+                  name: 'Terran', 
+                  itemStyle: { color: raceColorMap['Terran'] } 
+                },
+                { 
+                  value: 30, 
+                  name: 'Protoss', 
+                  itemStyle: { color: raceColorMap['Protoss'] } 
+                },
+                { 
+                  value: 30, 
+                  name: 'Zerg', 
+                  itemStyle: { color: raceColorMap['Zerg'] } 
+                }
+              ]
+            }]
+          };
+          
+          this.raceChart.setOption(option);
+          console.log('Gráfico de razas inicializado con datos del backend');
+        },
+        error: (error) => {
+          console.error('Error al cargar distribución de razas:', error);
+          
+          // Fallback to predefined data
+          const fallbackOption = {
+            animation: false,
+            tooltip: {
+              trigger: 'item',
+              formatter: '{b}: {c} ({d}%)',
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              textStyle: { color: '#1f2937' }
             },
-            data: [
-              { value: 40, name: 'Terran', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
-              { value: 30, name: 'Protoss', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
-              { value: 30, name: 'Zerg', itemStyle: { color: 'rgba(251, 191, 114, 1)' } }
-            ]
-          }]
-        };
-        
-        this.raceChart.setOption(option);
-        console.log('Gráfico de razas inicializado correctamente');
-      } catch (error) {
-        console.error('Error al inicializar el gráfico de distribución de razas:', error);
-      }
+            series: [{
+              type: 'pie',
+              radius: ['40%', '70%'],
+              itemStyle: { borderRadius: 8 },
+              label: {
+                show: true,
+                color: '#fff',
+                formatter: '{b}\n{d}%'
+              },
+              data: [
+                { 
+                  value: 40, 
+                  name: 'Terran', 
+                  itemStyle: { color: raceColorMap['Terran'] } 
+                },
+                { 
+                  value: 30, 
+                  name: 'Protoss', 
+                  itemStyle: { color: raceColorMap['Protoss'] } 
+                },
+                { 
+                  value: 30, 
+                  name: 'Zerg', 
+                  itemStyle: { color: raceColorMap['Zerg'] } 
+                }
+              ]
+            }]
+          };
+          
+          this.raceChart.setOption(fallbackOption);
+        }
+      });
     }
   }
   

@@ -1,67 +1,69 @@
 <!-- src/app/landing/landing.component.html -->
 <div class="landing-container">
     <!-- Navbar -->
-    <nav class="nav-bar">
-      <div class="nav-content">
-        <div class="logo-section">
-          <img src="https://static.readdy.ai/image/6929ea911451f6a77b70511112d43f5f/0116ddf4c957ced8aa6ace99961f89b6.png" alt="Starcraft Chile Logo" class="logo-img">
-          <span class="logo-text">SC-CHL</span>
-        </div>
-        
-        <div class="nav-links" [class.mobile-open]="mobileMenuOpen">
-          <a [routerLink]="['/']" class="nav-link active">Liga</a>
-          <a [routerLink]="['/currentseason']" class="nav-link">Ranking</a>
-          <a href="#comunidad" class="nav-link">Comunidad</a>
-          <a href="#donar" class="nav-link">Donar</a>
-          
-          <!-- Login/Profile buttons -->
-          <div *ngIf="!isAuthenticated" class="auth-buttons">
-            <button [routerLink]="['/auth']" class="login-button">
-              Iniciar Sesión
-            </button>
-          </div>
-          
-          <div *ngIf="isAuthenticated" class="auth-buttons">
-            <button [matMenuTriggerFor]="userMenu" class="profile-button">
-              <span class="user-alias">{{ primaryAlias || userName }}</span>
-              <mat-icon>arrow_drop_down</mat-icon>
-            </button>
-            
-            <mat-menu #userMenu="matMenu" class="user-menu">
-              <a mat-menu-item [routerLink]="['/profile']">
-                <mat-icon>person</mat-icon>
-                <span>Mi Perfil</span>
-              </a>
-              <button mat-menu-item (click)="logout()">
-                <mat-icon>exit_to_app</mat-icon>
-                <span>Cerrar Sesión</span>
-              </button>
-            </mat-menu>
-          </div>
-        </div>
-        
-        <button class="mobile-menu-button" (click)="toggleMobileMenu()">
-          <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    <!-- Navbar -->
+<nav class="nav-bar">
+  <div class="nav-content">
+    <!-- Botón de menú móvil -->
+    <button class="mobile-menu-button" (click)="toggleMobileMenu()">
+      <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    
+    <div class="logo-section">
+      <img src="/assets/logo.png" alt="Comunidad Starcraft CHILE Logo" class="logo-img">
+      <span class="logo-text">SC-CHL</span>
+    </div>
+    
+    <div class="nav-links" [class.mobile-open]="mobileMenuOpen">
+      <a [routerLink]="['/']" class="nav-link active">Liga</a>
+      <a [routerLink]="['/currentseason']" class="nav-link">Ranking</a>
+      <a href="#comunidad" class="nav-link">Comunidad</a>
+      <a href="#donar" class="nav-link">Donar</a>
+      
+      <!-- Login/Profile buttons -->
+      <div *ngIf="!isAuthenticated" class="auth-buttons">
+        <button [routerLink]="['/auth']" class="login-button">
+          Iniciar Sesión
         </button>
       </div>
       
-      <!-- Barra de progreso para donaciones 
-      <div class="progress-bar-container">
-        <div class="progress-content">
-          <div class="progress-text">
-            <span>Meta de donación:</span>
-            <div class="progress-track">
-              <div class="progress-fill" [style.width.%]="progressPercentage"></div>
-            </div>
-          </div>
-          <div class="progress-numbers">
-            <span class="current-amount">${{currentAmount}}</span>
-            <span>de</span>
-            <span class="goal-amount">${{goalAmount}}</span>
-          </div>
+      <div *ngIf="isAuthenticated" class="auth-buttons">
+        <button [matMenuTriggerFor]="userMenu" class="profile-button">
+          <span class="user-alias">{{ primaryAlias || userName }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        
+        <mat-menu #userMenu="matMenu" class="user-menu">
+          <a mat-menu-item [routerLink]="['/profile']">
+            <mat-icon>person</mat-icon>
+            <span>Mi Perfil</span>
+          </a>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Barra de progreso para donaciones (opcional/comentado) -->
+  <!-- <div class="progress-bar-container">
+    <div class="progress-content">
+      <div class="progress-text">
+        <span>Meta de donación:</span>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="progressPercentage"></div>
         </div>
-      </div>-->
-    </nav>
+      </div>
+      <div class="progress-numbers">
+        <span class="current-amount">${{currentAmount}}</span>
+        <span>de</span>
+        <span class="goal-amount">${{goalAmount}}</span>
+      </div>
+    </div>
+  </div> -->
+</nav>
   
     <!-- Hero section -->
     <section class="hero-section">

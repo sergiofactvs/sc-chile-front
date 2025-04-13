@@ -60,7 +60,8 @@ import { ActiveTournamentDto } from '../models/tournament.model';
         </div>
 
         <!-- Si no hay torneos activos -->
-        <div *ngIf="!isLoading && !errorMessage && (!activeTournaments || activeTournaments.length === 0)" class="no-tournaments">
+        
+        <div *ngIf="!isLoading && !errorMessage && (!activeTournaments || activeTournaments.length === 0) && !enrollmentStatus?.isEnrolled" class="no-tournaments">
           <mat-card class="info-card">
             <mat-card-content>
               <mat-icon class="info-icon">info</mat-icon>

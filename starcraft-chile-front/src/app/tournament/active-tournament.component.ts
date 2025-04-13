@@ -16,6 +16,7 @@ import { AuthService } from '../services/auth.service';
 import { ActiveTournamentWithPlayersDto, TournamentPlayerDto } from '../models/tournament.model';
 import { TournamentEnrollmentService } from '../services/tournament-enrollment.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-active-tournament',
   standalone: true,
@@ -113,6 +114,7 @@ export class ActiveTournamentComponent implements OnInit {
       }
     });
   }
+  
   getSafeChallongeUrl(url: string): SafeResourceUrl {
     // Añadir "/module" al final de la URL si no lo tiene ya
     if (url && !url.endsWith('/module')) {
@@ -120,6 +122,7 @@ export class ActiveTournamentComponent implements OnInit {
     }
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
+  
   checkEnrollmentStatus(): void {
     this.tournamentEnrollmentService.getEnrollmentStatus().subscribe({
       next: (status) => {
@@ -247,6 +250,13 @@ export class ActiveTournamentComponent implements OnInit {
       case 20: return 'Europe';
       default: return `Gateway ${gatewayId}`;
     }
+  }
+  
+  formatRaceName(race: string | null | undefined): string {
+    if (!race) return 'N/A';
+    
+    // Convertir primera letra a mayúscula y el resto a minúscula
+    return race.charAt(0).toUpperCase() + race.slice(1).toLowerCase();
   }
   
   // Método para obtener la clase CSS para la posición del ranking

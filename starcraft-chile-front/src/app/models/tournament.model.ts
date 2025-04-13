@@ -102,3 +102,9 @@ export interface TournamentPlayerDto {
   winRate: number;
   winRateFormatted?: string;
 }
+
+export interface RaceDistributionDto {
+  race?: string;
+  count: number;
+  percentage: number;
+}

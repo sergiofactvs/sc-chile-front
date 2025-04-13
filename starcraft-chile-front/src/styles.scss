@@ -1,8 +1,85 @@
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+/* Variables globales y estilos base */
+:root {
+  --primary-color: #0B3D91;
+  --secondary-color: #DA291C;
+  --bg-dark: #0A0C1B;
+  --bg-darker: #070810;
+  --bg-card: #111326;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --text-tertiary: #666666;
+  --border-color: rgba(255, 255, 255, 0.1);
+  
+  --terran-color: #57B5E7;
+  --protoss-color: #8DD3C7;
+  --zerg-color: #FBBF72;
+  
+  --font-main: 'Roboto', sans-serif;
+  --font-special: 'Orbitron', sans-serif;
+}
 
+/* Estilos base */
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #000000;
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+}
+
+/* Estilos de tipografía común */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-special);
+  margin-top: 0;
+}
+
+/* Estilos de botón comunes */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  font-family: var(--font-special);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  font-family: var(--font-special);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+/* Animaciones comunes */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilos de Material */
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+/* Sobrescritos comunes para componentes de Angular Material */
+.mat-mdc-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-table {
+  background-color: transparent !important;
+}
+
+.mat-mdc-header-row {
+  background-color: rgba(30, 30, 50, 0.5) !important;
+}
+
+.mat-mdc-header-cell {
+  color: var(--text-primary) !important;
+  font-weight: bold !important;
+}
+
+.mat-mdc-cell {
+  color: var(--text-primary) !important;
 }
