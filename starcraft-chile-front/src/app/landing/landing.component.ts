@@ -12,7 +12,8 @@ import { TournamentEnrollmentService } from '../services/tournament-enrollment.s
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { QualifiedPlayersComponent } from '../tournament/qualified-players.component';
 import * as echarts from 'echarts';
-
+import { DonationDto } from '../models/donation.model';
+import { DonationService } from '../services/donation.service';
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -45,16 +46,22 @@ export class LandingComponent implements OnInit, AfterViewInit {
   mobileMenuOpen: boolean = false;
   
   // Donation progress
-  currentAmount: number = 350;
-  goalAmount: number = 1000;
-  progressPercentage: number = 35;
+  currentAmount: number=0;
+  goalAmount: number=0;
+  progressPercentage: number=0;
+  donationInfo: DonationDto | null = null;
+  isLoadingDonation: boolean = true;
+
+
   
   constructor(
     private authService: AuthService,
     private playerService: PlayerService,
     private activeTournamentService: ActiveTournamentService,
     private tournamentEnrollmentService: TournamentEnrollmentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private donationService: DonationService,
+    
   ) {}
   
   ngOnInit() {
@@ -84,7 +91,8 @@ export class LandingComponent implements OnInit, AfterViewInit {
     
     // Cargar torneo activo
     this.loadActiveTournament();
-    
+     // Cargar información de donaciones
+     this.loadDonationInfo();
     // Calcular porcentaje de progreso
     this.updateProgressPercentage();
   }
@@ -101,7 +109,28 @@ export class LandingComponent implements OnInit, AfterViewInit {
       this.resizeCharts();
     });
   }
-  
+  loadDonationInfo(): void {
+    this.isLoadingDonation = true;
+    console.info('cargando donacion paso 1');
+    this.donationService.getDonationInfo().subscribe({
+      next: (response) => {
+        console.info('cargando donacion paso 2');
+        console.info(response);
+        if (response.success && response.data) {
+          console.info('cargando donacion paso 3');
+          this.donationInfo = response.data;
+          this.currentAmount = response.data.totalAmount;
+          this.goalAmount = response.data.goalAmount;
+          this.updateProgressPercentage();
+        }
+        this.isLoadingDonation = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar información de donaciones:', err);
+        this.isLoadingDonation = false;
+      }
+    });
+  }
   // Método para inicializar todos los gráficos
   initCharts() {
     console.log('Inicializando gráficos...');

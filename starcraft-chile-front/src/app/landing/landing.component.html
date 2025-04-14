@@ -48,7 +48,7 @@
   </div>
   
   <!-- Barra de progreso para donaciones (opcional/comentado) -->
-  <!-- <div class="progress-bar-container">
+  <div class="progress-bar-container" *ngIf="donationInfo">
     <div class="progress-content">
       <div class="progress-text">
         <span>Meta de donación:</span>
@@ -57,12 +57,12 @@
         </div>
       </div>
       <div class="progress-numbers">
-        <span class="current-amount">${{currentAmount}}</span>
+        <span class="current-amount">{{ donationInfo.currency || '$' }} {{donationInfo.totalAmount}}</span>
         <span>de</span>
-        <span class="goal-amount">${{goalAmount}}</span>
+        <span class="goal-amount">{{ donationInfo.currency || '$' }} {{donationInfo.goalAmount}}</span>
       </div>
     </div>
-  </div> -->
+  </div>
 </nav>
   
     <!-- Hero section -->
@@ -291,7 +291,7 @@
         </div>
         
         <div class="social-grid">
-          <a href="#" class="social-card discord">
+          <a href="https://discord.com/invite/5nY4JwnQ49" target="_blank" class="social-card discord">
             <div class="social-icon">
               <mat-icon>discord</mat-icon>
             </div>
@@ -299,7 +299,7 @@
             <p class="social-desc">Únete a nuestra comunidad para charlar y encontrar partidas</p>
           </a>
           
-          <a href="#" class="social-card youtube">
+          <a href="https://www.youtube.com/@starcraftchile" target="_blank" class="social-card youtube">
             <div class="social-icon">
               <mat-icon>smart_display</mat-icon>
             </div>
@@ -318,7 +318,7 @@
             <p class="social-desc">Únete a nuestro grupo de WhatsApp para comunicación inmediata</p>
           </a>
           
-          <a href="#" class="social-card twitch">
+          <a href="https://www.twitch.tv/comunidadstarcraftchile" target="_blank" class="social-card twitch">
             <div class="social-icon">
               <mat-icon>live_tv</mat-icon>
             </div>
@@ -347,38 +347,46 @@
           <p class="section-subtitle">Tu donación nos ayuda a mantener y mejorar los torneos y eventos</p>
         </div>
         
-        <div class="donation-card">
+        <!-- Loading state -->
+        <div *ngIf="isLoadingDonation" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Cargando información de donaciones...</p>
+        </div>
+        
+        <div *ngIf="!isLoadingDonation" class="donation-card">
           <div class="donation-header">
             <div class="donation-icon">
               <mat-icon>favorite</mat-icon>
             </div>
             <h3 class="donation-title">Realiza una Donación</h3>
-            <p class="donation-subtitle">Elige la plataforma que prefieras para apoyar nuestro proyecto</p>
+            <p class="donation-subtitle" *ngIf="donationInfo?.description">{{ donationInfo?.description }}</p>
+            <p class="donation-subtitle" *ngIf="!donationInfo?.description">Elige la plataforma que prefieras para apoyar nuestro proyecto</p>
           </div>
           
           <div class="donation-progress">
             <div class="progress-text">
               <span class="progress-label">Progreso de donaciones</span>
               <div class="progress-amounts">
-                <span class="current-amount">${{currentAmount}}</span>
-                <span class="separator">de</span>
-                <span class="goal-amount">${{goalAmount}}</span>
+                <span class="current-amount">{{ donationInfo?.currency || '$' }} {{ currentAmount }}</span>
+                <span class="separator"> de </span>
+                <span class="goal-amount">{{ donationInfo?.currency || '$' }} {{ goalAmount }}</span>
               </div>
             </div>
             
             <div class="progress-bar">
               <div class="progress-fill" [style.width.%]="progressPercentage">
-                <span class="progress-percentage">{{progressPercentage}}%</span>
+                <span class="progress-percentage"> {{progressPercentage}}%</span>
               </div>
             </div>
             
             <div class="progress-message">
-              Ayúdanos a alcanzar nuestra meta para mejorar los torneos y premios
+              <span *ngIf="donationInfo?.isCurrentPeriod">Periodo actual de donación: {{ donationInfo?.startDate | date:'dd/MM/yyyy' }} al {{ donationInfo?.endDate | date:'dd/MM/yyyy' }}</span>
+              <span *ngIf="!donationInfo?.isCurrentPeriod">Ayúdanos a alcanzar nuestra meta para mejorar los torneos y premios</span>
             </div>
           </div>
           
           <div class="donation-options">
-            <a href="#" class="donation-option paypal">
+            <a href="https://www.paypal.com/pools/c/9dOlcqFxIu" target="_blank" class="donation-option paypal">
               <div class="option-icon">
                 <mat-icon>payment</mat-icon>
               </div>
@@ -398,7 +406,7 @@
               </div>
             </a>
             
-            <a href="#" class="donation-option twitch">
+            <a href="https://www.twitch.tv/comunidadstarcraftchile" target="_blank" class="donation-option twitch">
               <div class="option-icon">
                 <mat-icon>live_tv</mat-icon>
               </div>
