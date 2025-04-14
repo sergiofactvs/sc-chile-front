@@ -11,9 +11,14 @@ import { adminRoutes } from './admin/admin.routes';
 import { AuthGuard } from './guards/auth.guard';
 import { PlayerPublicProfileComponent } from './player/player-public-profile.component';
 import { QualifiedPlayersComponent } from './tournament/qualified-players.component';
+import { CommunityRankingComponent } from './community-ranking/community-ranking.component';
 
 export const routes: Routes = [
   ...adminRoutes,
+  {
+    path: 'community-ranking', 
+    component: CommunityRankingComponent
+  },
   { 
     path: 'bew', 
     component: NewLandingComponent // Cambiamos al nuevo componente de landing

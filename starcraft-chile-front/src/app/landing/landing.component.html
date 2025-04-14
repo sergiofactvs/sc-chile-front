@@ -16,7 +16,7 @@
     
     <div class="nav-links" [class.mobile-open]="mobileMenuOpen">
       <a [routerLink]="['/']" class="nav-link active">Liga</a>
-      <a [routerLink]="['/currentseason']" class="nav-link">Ranking</a>
+      <a [routerLink]="['/community-ranking']" class="nav-link">Ranking</a>
       <a href="#comunidad" class="nav-link">Comunidad</a>
       <a href="#donar" class="nav-link">Donar</a>
       
@@ -307,12 +307,15 @@
             <p class="social-desc">Mira nuestros torneos y tutoriales</p>
           </a>
           
-          <a href="#" class="social-card twitter">
+          <a href="https://chat.whatsapp.com/KQwi5dDis229YHe4W6KqAz" target="_blank" class="social-card whatsapp">
             <div class="social-icon">
-              <mat-icon>chat</mat-icon>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M12.001 2C17.5238 2 22.001 6.47715 22.001 12C22.001 17.5228 17.5238 22 12.001 22C10.1671 22 8.44472 21.5064 6.93759 20.6284L2.001 22L3.66423 17.0085C2.79492 15.5535 2.30121 13.8351 2.30121 12C2.30121 6.47715 6.77836 2 12.301 2H12.001Z"/>
+                <path fill="white" d="M8.79492 7.30542C8.58638 6.90825 8.25045 6.77882 7.96832 6.76767C7.72834 6.75766 7.45998 6.78221 7.20336 6.83128C6.88996 6.89006 6.57676 7.09494 6.36796 7.38628C6.12191 7.71417 5.54709 8.23689 5.54709 9.29589C5.54709 10.3549 6.31903 11.3729 6.43138 11.5582C6.54373 11.7436 7.93825 13.9592 10.0677 14.8364C11.7608 15.5439 12.1018 15.3737 12.4761 15.3333C12.8503 15.2928 13.7139 14.8232 13.8864 14.3341C14.0589 13.845 14.0589 13.4261 14.0095 13.3341C13.9602 13.2422 13.7517 13.1622 13.4417 13.0022C13.1318 12.8422 11.8559 12.1638 11.6077 12.0735C11.3595 11.9833 11.1509 11.9379 10.9425 12.2109C10.734 12.4839 10.2245 13.1033 10.0425 13.3116C9.86055 13.52 9.67859 13.5469 9.36836 13.3869C9.05812 13.2269 8.1436 12.9309 7.07488 11.9903C6.22632 11.2317 5.65715 10.2944 5.47519 9.98298C5.29323 9.67157 5.45714 9.50222 5.61974 9.34304C5.76104 9.20125 5.93952 8.97835 6.09949 8.79633C6.25946 8.61432 6.3349 8.47289 6.42505 8.26453C6.51521 8.05617 6.46746 7.87415 6.38796 7.71417C6.30846 7.55418 5.74934 6.25817 5.54709 5.73554"/>
+              </svg>
             </div>
-            <h3 class="social-title">Twitter</h3>
-            <p class="social-desc">Mantente informado de nuestras últimas novedades</p>
+            <h3 class="social-title">WhatsApp</h3>
+            <p class="social-desc">Únete a nuestro grupo de WhatsApp para comunicación inmediata</p>
           </a>
           
           <a href="#" class="social-card twitch">
@@ -424,7 +427,7 @@
               <h4 class="footer-title">Enlaces</h4>
               <ul>
                 <li><a [routerLink]="['/']">Inicio</a></li>
-                <li><a [routerLink]="['/currentseason']">Ranking</a></li>
+                <li><a [routerLink]="['/community-ranking']">Ranking</a></li>
                 <li><a href="#comunidad">Comunidad</a></li>
                 <li><a href="#donar">Donar</a></li>
               </ul>

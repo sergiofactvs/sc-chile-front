@@ -1178,6 +1178,38 @@
         }
       }
     },
+    "/api/Donation": {
+      "get": {
+        "tags": [
+          "Donation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationDtoApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationDtoApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationDtoApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/api/Player/players/{id}/public-profile": {
       "get": {
         "tags": [
@@ -5215,6 +5247,66 @@
           "confirmNewPassword": {
             "minLength": 1,
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DonationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "goalAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "percentageCompleted": {
+            "type": "number",
+            "format": "double"
+          },
+          "isCurrentPeriod": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DonationDtoApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/DonationDto"
           }
         },
         "additionalProperties": false

@@ -995,7 +995,11 @@ td {
   font-size: 1.5rem;
   line-height: 1;
 }
-
+/* Add to existing social card styles */
+.social-card.whatsapp .social-icon {
+  background-color: rgba(37, 211, 102, 0.2);
+  color: #25D366;
+}
 /* Corrección para el menú móvil */
 @media (max-width: 768px) {
   .mobile-menu-button {

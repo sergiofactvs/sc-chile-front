@@ -1,0 +1,118 @@
+<!-- src/app/community-ranking/community-ranking.component.html -->
+<div class="landing-container">
+    <nav class="nav-bar">
+      <div class="nav-content">
+        <div class="logo-section">
+          <a [routerLink]="['/']">
+            <img src="assets/logo.png" alt="StarCraft Chile Logo" class="logo-img">
+            <span class="logo-text">SC-CHL</span>
+          </a>
+        </div>
+        
+        <div class="nav-links">
+          <a [routerLink]="['/']" class="nav-link">Liga</a>
+          <a [routerLink]="['/currentseason']" class="nav-link active">Ranking</a>
+          <a href="#comunidad" class="nav-link">Comunidad</a>
+          <a href="#donar" class="nav-link">Donar</a>
+          
+          <!-- Login/Profile buttons -->
+          <div *ngIf="!isAuthenticated" class="auth-buttons">
+            <button [routerLink]="['/auth']" class="login-button">
+              Iniciar Sesión
+            </button>
+          </div>
+          
+          <div *ngIf="isAuthenticated" class="auth-buttons">
+            <button [matMenuTriggerFor]="userMenu" class="profile-button">
+              <span class="user-alias">{{ primaryAlias || userName }}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            
+            <mat-menu #userMenu="matMenu" class="user-menu">
+              <a mat-menu-item [routerLink]="['/profile']">
+                <mat-icon>person</mat-icon>
+                <span>Mi Perfil</span>
+              </a>
+              <button mat-menu-item (click)="logout()">
+                <mat-icon>exit_to_app</mat-icon>
+                <span>Cerrar Sesión</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </nav>
+  
+    <section class="ranking-section">
+      <div class="section-container">
+        <div class="section-header">
+          <h2 class="section-title">Ranking de la Comunidad</h2>
+          <p class="section-subtitle">Clasificación basada en puntos de torneos y participación</p>
+        </div>
+  
+        <ng-container *ngIf="!isLoading; else loadingTemplate">
+          <ng-container *ngIf="!error; else errorTemplate">
+            <div class="ranking-table-container">
+              <table class="ranking-table">
+                <thead>
+                  <tr>
+                    <th class="pos-column">POS</th>
+                    <th>JUGADOR</th>
+                    <th>PAÍS</th>
+                    <th class="points-column">TOTAL PUNTOS</th>
+                    <th class="points-column">PUNTOS TORNEO</th>
+                    <th class="points-column">PUNTOS PARTICIPACIÓN</th>
+                    <th>RAZA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let player of players; let i = index" 
+                      [class]="getRankingPositionClass(i + 1)">
+                    <td class="pos-column">
+                      <span class="position-number">{{ i + 1 }}</span>
+                      <span class="player-badge">{{ getPlayerBadge(i + 1) }}</span>
+                    </td>
+                    <td>
+                        <div class="player-name">
+                            <a [routerLink]="['/player', player.playerId]">
+                              {{ player.playerAlias || player.playerName }}
+                            </a>
+                          </div>
+                    </td>
+                    <td>{{ player.country || 'N/A' }}</td>
+                    <td class="points-column total-points">
+                      <strong>{{ player.totalPoints }}</strong>
+                    </td>
+                    <td class="points-column">{{ player.tournamentPoints }}</td>
+                    <td class="points-column">{{ player.participationPoints }}</td>
+                    <td>
+                      <div class="race-cell">
+                        <img 
+                          *ngIf="player.race"
+                          [src]="getRaceIcon(player.race)" 
+                          [alt]="player.race" 
+                          class="race-icon"
+                        >
+                        <span *ngIf="!player.race">N/A</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </ng-container>
+  
+        <ng-template #loadingTemplate>
+          <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Cargando ranking de la comunidad...</p>
+          </div>
+        </ng-template>
+  
+        <ng-template #errorTemplate>
+          <div class="error">{{ error }}</div>
+        </ng-template>
+      </div>
+    </section>
+  </div>
