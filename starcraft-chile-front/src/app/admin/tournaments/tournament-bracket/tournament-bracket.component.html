@@ -1,0 +1,229 @@
+<div class="bracket-management">
+  <div class="dashboard-header">
+    <img 
+      src="/assets/logo.png" 
+      alt="Comunidad Starcraft CHILE Logo" 
+      class="dashboard-logo"
+    />
+    <h1>Bracket de Torneo: {{ tournamentName }}</h1>
+  </div>
+
+  <div class="back-link">
+    <a (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Torneos
+    </a>
+  </div>
+
+  <!-- Implementación manual de tabs -->
+  <div class="custom-tabs">
+    <div class="tab-header">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 0" 
+        (click)="setActiveTab(0)"
+      >
+        Generar Bracket
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 1" 
+        (click)="setActiveTab(1)"
+      >
+        Ver/Editar Bracket
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 2" 
+        (click)="setActiveTab(2)"
+      >
+        Jugadores Clasificados
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <!-- Contenido de la pestaña Generar Bracket -->
+      <div *ngIf="activeTab === 0" class="tab-pane">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Generar Bracket Automáticamente</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="generateForm" (ngSubmit)="generateBracket()">
+              <mat-form-field appearance="outline">
+                <mat-label>Número de Jugadores</mat-label>
+                <input 
+                  matInput 
+                  type="number" 
+                  formControlName="playerCount" 
+                  min="2" 
+                  max="256"
+                >
+                <mat-error *ngIf="generateForm.get('playerCount')?.hasError('required')">
+                  El número de jugadores es requerido
+                </mat-error>
+                <mat-error *ngIf="generateForm.get('playerCount')?.hasError('min')">
+                  Mínimo 2 jugadores
+                </mat-error>
+                <mat-error *ngIf="generateForm.get('playerCount')?.hasError('max')">
+                  Máximo 256 jugadores
+                </mat-error>
+              </mat-form-field>
+              
+              <div class="checkbox-group">
+                <mat-checkbox formControlName="doubleElimination">
+                  Doble Eliminación
+                </mat-checkbox>
+              </div>
+              
+              <div class="form-actions">
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  type="submit"
+                  [disabled]="generateForm.invalid || isGenerating"
+                >
+                  {{ isGenerating ? 'Generando...' : 'Generar Bracket' }}
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+        
+        <div class="warning-section">
+          <mat-card class="warning-card">
+            <mat-card-content>
+              <h3><mat-icon>warning</mat-icon> Advertencia</h3>
+              <p>Generar un nuevo bracket eliminará cualquier bracket existente para este torneo. Esta acción no se puede deshacer.</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        
+        <div class="finalize-section">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Finalizar Torneo</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Una vez que todos los partidos hayan sido jugados, puede procesar las posiciones finales.</p>
+              <button 
+                mat-raised-button 
+                color="warn" 
+                (click)="processFinalPositions()"
+              >
+                Procesar Posiciones Finales
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Contenido de la pestaña Ver/Editar Bracket -->
+      <div *ngIf="activeTab === 1" class="tab-pane">
+        <div *ngIf="rounds.length === 0" class="no-data">
+          <p>No hay bracket generado para este torneo.</p>
+          <p>Vaya a la pestaña "Generar Bracket" para crear uno.</p>
+        </div>
+        
+        <div *ngIf="rounds.length > 0" class="bracket-view">
+          <div class="rounds-container">
+            <div *ngFor="let round of rounds" class="round-column">
+              <div class="round-header">
+                <h3>{{ round.name }}</h3>
+                <span class="round-info">
+                  {{ round.isWinnerBracket ? 'Winner Bracket' : 'Loser Bracket' }} | 
+                  {{ round.pointsPerWin }} pts por victoria
+                </span>
+              </div>
+              
+              <div *ngIf="matches[round.id]" class="matches-container">
+                <div *ngFor="let match of matches[round.id]" class="match-card">
+                  <div class="match-order">Match #{{ match.matchOrder }}</div>
+                  
+                  <div class="player player1" [class.winner]="match.winnerId === match.player1Id">
+                    {{ match.player1Name || 'TBD' }}
+                    <span *ngIf="match.score1 !== null" class="score">{{ match.score1 }}</span>
+                  </div>
+                  
+                  <div class="vs">vs</div>
+                  
+                  <div class="player player2" [class.winner]="match.winnerId === match.player2Id">
+                    {{ match.player2Name || 'TBD' }}
+                    <span *ngIf="match.score2 !== null" class="score">{{ match.score2 }}</span>
+                  </div>
+                  
+                  <div class="match-actions">
+                    <button 
+                      mat-icon-button 
+                      color="primary" 
+                      title="Editar partido"
+                      (click)="openEditMatchDialog(match, round.id)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button 
+                      *ngIf="match.player1Id && match.player2Id && !match.winnerId" 
+                      mat-icon-button 
+                      color="accent" 
+                      title="Registrar resultado"
+                      (click)="openRecordResultDialog(match)"
+                    >
+                      <mat-icon>sports_score</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="round-footer">
+                  <button 
+                    mat-mini-fab 
+                    color="primary" 
+                    title="Añadir partido"
+                    (click)="openEditMatchDialog(null, round.id)"
+                  >
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido de la pestaña Jugadores Clasificados -->
+      <div *ngIf="activeTab === 2" class="tab-pane">
+        <!--<div *ngIf="players.length === 0" class="no-data">
+          <p>No hay jugadores clasificados para este torneo.</p>
+        </div> -->
+        
+        <div *ngIf="players.length > 0" class="players-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                <th>Alias</th>
+                <th>Raza</th>
+                <th>MMR</th>
+                <th>País</th>
+                <th>Record</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let player of players">
+                <td>{{ player.playerName || 'N/A' }}</td>
+                <td>{{ player.playerAlias || 'N/A' }}</td>
+                <td>{{ player.race || 'N/A' }}</td>
+                <td>{{ player.mmr || 0 }}</td>
+                <td>{{ player.country || 'N/A' }}</td>
+                <td>{{ player.wins || 0 }}W - {{ player.losses || 0 }}L</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="debug-info">
+            <p>Total de jugadores cargados: {{ players.length }}</p>
+            <button mat-button (click)="loadPlayers()">Recargar Jugadores</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

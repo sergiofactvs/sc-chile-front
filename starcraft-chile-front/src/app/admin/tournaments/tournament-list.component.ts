@@ -108,6 +108,14 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
             >
               <mat-icon>delete</mat-icon>
             </button>
+            <button 
+            mat-icon-button 
+            class="bracket-button"
+            (click)="manageBracket(tournament.id)"
+            aria-label="Gestionar bracket del torneo"
+          >
+            <mat-icon>account_tree</mat-icon>
+          </button>
           </td>
         </ng-container>
 
@@ -248,6 +256,10 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
       align-items: center;
       justify-content: center;
     }
+      .bracket-button {
+      background-color: #1E90FF !important;
+      color: white !important;
+    }
   `]
 })
 export class TournamentListComponent implements OnInit {
@@ -263,7 +275,9 @@ export class TournamentListComponent implements OnInit {
   ngOnInit() {
     this.loadTournaments();
   }
-
+  manageBracket(id: number) {
+    this.router.navigate([`/admin/tournaments/${id}/bracket`]);
+  }
   loadTournaments() {
     this.tournamentService.getTournaments().subscribe({
       next: (tournaments) => {
